@@ -1,6 +1,6 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Phone } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -60,6 +60,9 @@ const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [filteredProjects, setFilteredProjects] = useState(portfolioProjects);
   const observedElementsRef = useRef<(HTMLElement | null)[]>([]);
+
+  const whatsappNumber = "5512997767048";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá! Gostaria de solicitar um orçamento para um projeto.`;
 
   useEffect(() => {
     if (selectedCategory === "Todos") {
@@ -181,8 +184,11 @@ const Portfolio = () => {
             <p className="text-muted-foreground">
               Entre em contato para discutir seu projeto e transformar seu espaço.
             </p>
-            <Button asChild size="lg">
-              <Link to="/contato">Solicitar Orçamento</Link>
+            <Button asChild size="lg" className="flex items-center gap-2">
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                <Phone size={18} />
+                <span>12 99776-7048</span>
+              </a>
             </Button>
           </div>
         </div>

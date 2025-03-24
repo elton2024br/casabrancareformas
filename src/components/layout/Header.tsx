@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -42,6 +42,9 @@ const Header = () => {
     { name: 'Contato', path: '/contato' }
   ];
 
+  const whatsappNumber = "5512997767048";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá! Gostaria de solicitar um orçamento.`;
+
   return (
     <header
       className={cn(
@@ -71,8 +74,11 @@ const Header = () => {
               {item.name}
             </Link>
           ))}
-          <Button asChild size="sm">
-            <Link to="/contato">Orçamento</Link>
+          <Button asChild size="sm" className="flex items-center gap-2">
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              <Phone size={16} />
+              <span className="hidden sm:inline">12 99776-7048</span>
+            </a>
           </Button>
         </nav>
 
@@ -105,10 +111,16 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
-            <Button asChild className="w-full sm:w-auto mt-4">
-              <Link to="/contato" onClick={() => setIsMenuOpen(false)}>
+            <Button asChild className="w-full sm:w-auto mt-4 flex items-center justify-center gap-2">
+              <a 
+                href={whatsappUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Phone size={18} />
                 Solicitar Orçamento
-              </Link>
+              </a>
             </Button>
             <Link 
               to="/admin" 

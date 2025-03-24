@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Phone } from "lucide-react";
 
 interface CtaSectionProps {
   addToRefs: (el: HTMLElement | null, index: number) => void;
@@ -9,6 +10,8 @@ interface CtaSectionProps {
 
 export function CtaSection({ addToRefs }: CtaSectionProps) {
   const isMobile = useIsMobile();
+  const whatsappNumber = "5512997767048";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá! Gostaria de solicitar um orçamento.`;
   
   return (
     <section className="py-12 md:py-32">
@@ -25,8 +28,11 @@ export function CtaSection({ addToRefs }: CtaSectionProps) {
               Entre em contato para um orçamento personalizado e dê o primeiro passo para a reforma dos seus sonhos.
             </p>
             <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
-              <Button asChild size={isMobile ? "default" : "lg"} variant="secondary" className="w-full sm:w-auto">
-                <Link to="/contato">Solicitar Orçamento</Link>
+              <Button asChild size={isMobile ? "default" : "lg"} variant="secondary" className="w-full sm:w-auto flex items-center gap-2">
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  <Phone size={isMobile ? 16 : 18} />
+                  <span>12 99776-7048</span>
+                </a>
               </Button>
               <Button asChild size={isMobile ? "default" : "lg"} variant="outline" className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 mt-3 sm:mt-0">
                 <Link to="/portfolio">Ver Projetos</Link>

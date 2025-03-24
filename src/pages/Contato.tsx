@@ -5,6 +5,10 @@ import Footer from "@/components/layout/Footer";
 import { SectionHeading } from "@/components/ui/section-heading";
 import ContactForm from "@/components/forms/ContactForm";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const whatsappNumber = "5512997767048";
+const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá! Gostaria de solicitar um orçamento para um projeto.`;
 
 const contactInfo = [
   {
@@ -15,9 +19,10 @@ const contactInfo = [
   },
   {
     icon: <Phone className="h-6 w-6 text-primary" />,
-    title: "Telefone",
-    details: "(11) 99999-9999",
-    link: "tel:+5511999999999",
+    title: "Telefone/WhatsApp",
+    details: "(12) 99776-7048",
+    link: whatsappUrl,
+    isWhatsapp: true,
   },
   {
     icon: <MapPin className="h-6 w-6 text-primary" />,
@@ -104,11 +109,16 @@ const Contato = () => {
                       {item.link ? (
                         <a
                           href={item.link}
-                          className="text-muted-foreground hover:text-primary transition-colors"
-                          target={item.title === "Endereço" ? "_blank" : undefined}
-                          rel={item.title === "Endereço" ? "noopener noreferrer" : undefined}
+                          className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
+                          target={item.isWhatsapp || item.title === "Endereço" ? "_blank" : undefined}
+                          rel={item.isWhatsapp || item.title === "Endereço" ? "noopener noreferrer" : undefined}
                         >
                           {item.details}
+                          {item.isWhatsapp && (
+                            <Button size="sm" variant="outline" className="ml-2 text-xs py-1 px-2 h-auto">
+                              Conversar no WhatsApp
+                            </Button>
+                          )}
                         </a>
                       ) : (
                         <p className="text-muted-foreground">{item.details}</p>
@@ -140,6 +150,15 @@ const Contato = () => {
               <h3 className="text-2xl font-medium mb-6">Envie uma Mensagem</h3>
               <div className="bg-white rounded-lg shadow-sm border p-6">
                 <ContactForm />
+              </div>
+              <div className="mt-6 text-center">
+                <p className="text-muted-foreground mb-4">Ou fale diretamente pelo WhatsApp:</p>
+                <Button asChild className="w-full sm:w-auto flex items-center justify-center gap-2">
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                    <Phone size={18} />
+                    Falar pelo WhatsApp: 12 99776-7048
+                  </a>
+                </Button>
               </div>
             </div>
           </div>
