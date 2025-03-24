@@ -23,18 +23,18 @@ export const TestimonialCard = forwardRef<HTMLDivElement, TestimonialCardProps>(
       <div
         ref={ref}
         className={cn(
-          "flex h-full flex-col rounded-lg border bg-card p-6 shadow-sm transition-all duration-200 hover:shadow-md",
+          "flex h-full flex-col rounded-lg border bg-card p-4 sm:p-6 shadow-sm transition-all duration-200 hover:shadow-md",
           className
         )}
       >
         {/* Rating */}
         {testimonial.rating && (
-          <div className="mb-4 flex">
+          <div className="mb-3 sm:mb-4 flex">
             {Array.from({ length: 5 }).map((_, i) => (
               <svg
                 key={i}
                 className={cn(
-                  "h-5 w-5",
+                  "h-4 w-4 sm:h-5 sm:w-5",
                   i < testimonial.rating! ? "text-primary fill-primary" : "text-muted stroke-muted"
                 )}
                 xmlns="http://www.w3.org/2000/svg"
@@ -53,22 +53,22 @@ export const TestimonialCard = forwardRef<HTMLDivElement, TestimonialCardProps>(
 
         {/* Content */}
         <blockquote className="flex-1">
-          <p className="text-card-foreground leading-relaxed">"{testimonial.content}"</p>
+          <p className="text-sm sm:text-base text-card-foreground leading-relaxed">"{testimonial.content}"</p>
         </blockquote>
 
         {/* Client */}
-        <div className="mt-6 flex items-center">
+        <div className="mt-4 sm:mt-6 flex items-center">
           {testimonial.imageUrl && (
             <img
               src={testimonial.imageUrl}
               alt={testimonial.name}
-              className="h-10 w-10 rounded-full object-cover mr-3"
+              className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover mr-3"
             />
           )}
           <div>
-            <p className="font-medium text-card-foreground">{testimonial.name}</p>
+            <p className="font-medium text-sm sm:text-base text-card-foreground">{testimonial.name}</p>
             {(testimonial.role || testimonial.company) && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 {testimonial.role}
                 {testimonial.role && testimonial.company && ", "}
                 {testimonial.company}

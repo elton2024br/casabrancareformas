@@ -20,6 +20,21 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+  // Close mobile menu when tapping outside
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (isMenuOpen && !target.closest('[data-mobile-menu]') && !target.closest('[data-mobile-trigger]')) {
+        setIsMenuOpen(false);
+      }
+    };
+    
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [isMenuOpen]);
+
   const navItems = [
     { name: 'Início', path: '/' },
     { name: 'Portfólio', path: '/portfolio' },
@@ -31,7 +46,7 @@ const Header = () => {
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out',
-        isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'
+        isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-3 sm:py-4' : 'bg-transparent py-4 sm:py-6'
       )}
     >
       <div className="container px-4 md:px-6 mx-auto flex items-center justify-between">
@@ -63,6 +78,7 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <button
+          data-mobile-trigger
           className="md:hidden relative z-10 p-2 -mr-2 text-foreground"
           onClick={toggleMenu}
           aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
@@ -70,25 +86,26 @@ const Header = () => {
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation with improved touch interaction */}
         <div
+          data-mobile-menu
           className={cn(
-            'fixed inset-0 bg-background/95 backdrop-blur-sm z-0 md:hidden transition-opacity duration-300',
+            'fixed inset-0 bg-background/95 backdrop-blur-sm z-0 md:hidden transition-all duration-300',
             isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           )}
         >
-          <nav className="flex flex-col items-center justify-center h-full space-y-8">
+          <nav className="flex flex-col items-center justify-center h-full space-y-6 py-8 px-6">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className="text-lg font-medium hover:text-primary transition-colors duration-200"
+                className="text-lg font-medium hover:text-primary transition-colors duration-200 py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            <Button asChild>
+            <Button asChild className="w-full sm:w-auto mt-4">
               <Link to="/contato" onClick={() => setIsMenuOpen(false)}>
                 Solicitar Orçamento
               </Link>

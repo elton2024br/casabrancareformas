@@ -22,19 +22,19 @@ export function HeroSection({ addToRefs }: HeroSectionProps) {
       <div className="relative container px-4 md:px-6 z-10 mx-auto text-center">
         <div
           ref={(el) => addToRefs(el, 0)}
-          className="max-w-3xl mx-auto space-y-4 sm:space-y-6"
+          className="max-w-3xl mx-auto space-y-3 sm:space-y-6"
         >
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-white">
+          <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-white">
             Transformamos espaços em <span className="text-primary">experiências</span>
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-white/80">
+          <p className="text-base sm:text-xl md:text-2xl text-white/80">
             Design minimalista e execução impecável para sua reforma dos sonhos
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4">
             <Button asChild size={isMobile ? "default" : "lg"} className="w-full sm:w-auto">
               <Link to="/portfolio">Ver Projetos</Link>
             </Button>
-            <Button asChild variant="outline" size={isMobile ? "default" : "lg"} className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10">
+            <Button asChild variant="outline" size={isMobile ? "default" : "lg"} className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10 mt-3 sm:mt-0">
               <Link to="/contato">Solicitar Orçamento</Link>
             </Button>
           </div>

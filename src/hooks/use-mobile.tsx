@@ -1,19 +1,29 @@
+
 import * as React from "react"
 
 const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  const [isMobile, setIsMobile] = React.useState<boolean>(false)
+  const [isInitialized, setIsInitialized] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    
+    const handleChange = () => {
+      setIsMobile(mql.matches)
+      if (!isInitialized) setIsInitialized(true)
     }
-    mql.addEventListener("change", onChange)
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-    return () => mql.removeEventListener("change", onChange)
-  }, [])
+    
+    // Modern approach with addEventListener
+    mql.addEventListener("change", handleChange)
+    
+    // Initial check
+    handleChange()
+    
+    return () => mql.removeEventListener("change", handleChange)
+  }, [isInitialized])
 
-  return !!isMobile
+  // Prevent hydration mismatch by returning false on server/first render
+  return isInitialized ? isMobile : false
 }
