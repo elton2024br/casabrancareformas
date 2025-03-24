@@ -1,5 +1,6 @@
 
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -181,7 +182,7 @@ const Portfolio = () => {
               Entre em contato para discutir seu projeto e transformar seu espaço.
             </p>
             <Button asChild size="lg">
-              <a href="/contato">Solicitar Orçamento</a>
+              <Link to="/contato">Solicitar Orçamento</Link>
             </Button>
           </div>
         </div>

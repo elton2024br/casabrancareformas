@@ -8,6 +8,9 @@ export function useIsMobile() {
   const [isInitialized, setIsInitialized] = React.useState<boolean>(false)
 
   React.useEffect(() => {
+    // Check if window exists (to avoid SSR issues)
+    if (typeof window === 'undefined') return;
+    
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     
     const handleChange = () => {
@@ -24,6 +27,6 @@ export function useIsMobile() {
     return () => mql.removeEventListener("change", handleChange)
   }, [isInitialized])
 
-  // Prevent hydration mismatch by returning false on server/first render
+  // Prevent hydration mismatch by returning false until client-side initialization
   return isInitialized ? isMobile : false
 }
