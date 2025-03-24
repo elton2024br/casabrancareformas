@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/admin/Login";
 import AdminLayout from "./components/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
+import AdminContent from "./pages/admin/AdminContent";
 import AdminPortfolio from "./pages/admin/AdminPortfolio";
 import AdminDepoimentos from "./pages/admin/AdminDepoimentos";
 import AdminContatos from "./pages/admin/AdminContatos";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/admin" element={<Login />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="content" element={<AdminContent />} />
             <Route path="portfolio" element={<AdminPortfolio />} />
             <Route path="depoimentos" element={<AdminDepoimentos />} />
             <Route path="contatos" element={<AdminContatos />} />

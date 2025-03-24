@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
 import { useNavigate, Link, Outlet } from "react-router-dom";
-import { Home, FolderOpen, MessageSquare, Users, LogOut } from "lucide-react";
+import { Home, FolderOpen, MessageSquare, Users, LogOut, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AdminLayout = () => {
@@ -22,6 +22,7 @@ const AdminLayout = () => {
 
   const navItems = [
     { name: "Dashboard", path: "/admin/dashboard", icon: <Home size={18} /> },
+    { name: "Gerenciar Conteúdo", path: "/admin/content", icon: <Edit size={18} /> },
     { name: "Portfólio", path: "/admin/portfolio", icon: <FolderOpen size={18} /> },
     { name: "Depoimentos", path: "/admin/depoimentos", icon: <MessageSquare size={18} /> },
     { name: "Contatos", path: "/admin/contatos", icon: <Users size={18} /> },
