@@ -6,16 +6,21 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Edit, Save, Image as ImageIcon, RefreshCw, CheckCircle } from "lucide-react";
+import { Edit, Save, Image as ImageIcon, RefreshCw, CheckCircle, Video } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
 
 // Mock data for website content (in a real app, this would come from a database)
 const initialContent = {
   hero: {
     title: "Transformamos espaços em experiências",
     subtitle: "Design minimalista e execução impecável para sua reforma dos sonhos",
-    backgroundImage: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2070&auto=format&fit=crop"
+    backgroundImage: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2070&auto=format&fit=crop",
+    useVideo: false,
+    videoUrl: ""
   },
   about: {
     title: "Sobre a Casa Branca",
@@ -44,8 +49,21 @@ const initialContent = {
   ],
   cta: {
     title: "Transforme seu espaço com a Casa Branca",
-    description: "Entre em contato para um orçamento personalizado e dê o primeiro passo para a reforma dos seus sonhos."
+    description: "Entre em contato para um orçamento personalizado e dê o primeiro passo para a reforma dos seus sonhos.",
+    useVideo: false,
+    videoUrl: ""
   }
+};
+
+// Função para validar URL de vídeo (YouTube ou Vimeo)
+const isValidVideoUrl = (url: string) => {
+  if (!url) return false;
+  
+  // Regex para validar URLs do YouTube e Vimeo
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  const vimeoRegex = /^(https?:\/\/)?(www\.)?(vimeo\.com)\/.+$/;
+  
+  return youtubeRegex.test(url) || vimeoRegex.test(url);
 };
 
 const AdminContent = () => {
@@ -54,10 +72,12 @@ const AdminContent = () => {
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [tempContent, setTempContent] = useState({});
   const [activeTab, setActiveTab] = useState("hero");
+  const [videoError, setVideoError] = useState<string | null>(null);
 
   const handleEditSection = (section: string) => {
     setEditingSection(section);
     setTempContent(content[section as keyof typeof content]);
+    setVideoError(null);
   };
 
   const handleEditServiceItem = (id: string) => {
@@ -71,12 +91,31 @@ const AdminContent = () => {
   const handleContentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setTempContent(prev => ({ ...prev, [name]: value }));
+    
+    // Limpa o erro de vídeo quando o usuário edita a URL
+    if (name === "videoUrl") {
+      setVideoError(null);
+    }
+  };
+
+  const handleToggleChange = (name: string, value: boolean) => {
+    setTempContent(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSaveSection = () => {
     if (editingSection) {
+      // Validar URL de vídeo, se estiver ativada
+      const tempContentTyped = tempContent as any;
+      if (tempContentTyped.useVideo && tempContentTyped.videoUrl) {
+        if (!isValidVideoUrl(tempContentTyped.videoUrl)) {
+          setVideoError("URL de vídeo inválida. Use apenas links do YouTube ou Vimeo.");
+          return;
+        }
+      }
+
       setContent(prev => ({ ...prev, [editingSection]: tempContent }));
       setEditingSection(null);
+      setVideoError(null);
       toast.success("Conteúdo atualizado com sucesso!");
     }
   };
@@ -116,7 +155,7 @@ const AdminContent = () => {
         <div>
           <h1 className="text-2xl font-semibold">Gerenciar Conteúdo do Site</h1>
           <p className="text-muted-foreground">
-            Edite textos e imagens de diferentes seções do site
+            Edite textos, imagens e vídeos de diferentes seções do site
           </p>
         </div>
         <Button 
@@ -167,68 +206,139 @@ const AdminContent = () => {
                 </div>
               </div>
               
-              <div>
-                <Label className="text-sm font-medium">Imagem de Fundo Atual</Label>
-                <div className="mt-2 relative aspect-video overflow-hidden rounded-md border">
-                  <img 
-                    src={content.hero.backgroundImage} 
-                    alt="Hero Background" 
-                    className="w-full h-full object-cover"
-                  />
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button 
-                        size="sm" 
-                        className="absolute bottom-2 right-2"
-                      >
-                        <ImageIcon className="h-4 w-4 mr-2" /> Alterar Imagem
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Alterar Imagem de Fundo</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4 mt-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="imageUrl">URL da Imagem</Label>
-                          <Input 
-                            id="imageUrl" 
-                            placeholder="https://exemplo.com/imagem.jpg" 
-                            defaultValue={content.hero.backgroundImage}
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          {[
-                            "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2070&auto=format&fit=crop",
-                            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1170&auto=format&fit=crop",
-                            "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop",
-                            "https://images.unsplash.com/photo-1600585152220-90462f5dbd88?q=80&w=2070&auto=format&fit=crop"
-                          ].map((img, index) => (
-                            <div 
-                              key={index} 
-                              className="cursor-pointer border rounded-md overflow-hidden aspect-video hover:opacity-75 transition-opacity"
-                              onClick={() => handleImageChange(img, "hero")}
-                            >
-                              <img src={img} alt={`Option ${index+1}`} className="w-full h-full object-cover" />
-                            </div>
-                          ))}
-                        </div>
-                        <Button 
-                          className="w-full" 
-                          onClick={() => {
-                            const input = document.getElementById("imageUrl") as HTMLInputElement;
-                            if (input.value) {
-                              handleImageChange(input.value, "hero");
-                            }
-                          }}
-                        >
-                          Salvar Imagem
-                        </Button>
+              {content.hero.useVideo ? (
+                <div>
+                  <Label className="text-sm font-medium">Vídeo Atual</Label>
+                  <div className="mt-2 relative aspect-video overflow-hidden rounded-md border">
+                    {content.hero.videoUrl ? (
+                      <iframe 
+                        src={content.hero.videoUrl.replace('watch?v=', 'embed/')} 
+                        className="w-full h-full" 
+                        title="Hero Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full bg-muted">
+                        <p className="text-muted-foreground">Nenhum vídeo configurado</p>
                       </div>
-                    </DialogContent>
-                  </Dialog>
+                    )}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          className="absolute bottom-2 right-2"
+                        >
+                          <Video className="h-4 w-4 mr-2" /> Alterar Vídeo
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Alterar Vídeo</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 mt-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="videoUrl">URL do Vídeo (YouTube ou Vimeo)</Label>
+                            <Input 
+                              id="videoUrl" 
+                              placeholder="https://www.youtube.com/watch?v=..." 
+                              defaultValue={content.hero.videoUrl}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Insira um link do YouTube ou Vimeo
+                            </p>
+                          </div>
+                          <Button 
+                            className="w-full" 
+                            onClick={() => {
+                              const input = document.getElementById("videoUrl") as HTMLInputElement;
+                              if (input.value) {
+                                if (isValidVideoUrl(input.value)) {
+                                  setContent(prev => ({
+                                    ...prev,
+                                    hero: {
+                                      ...prev.hero,
+                                      videoUrl: input.value
+                                    }
+                                  }));
+                                  toast.success("Vídeo atualizado com sucesso!");
+                                } else {
+                                  toast.error("URL de vídeo inválida. Use apenas links do YouTube ou Vimeo.");
+                                }
+                              }
+                            }}
+                          >
+                            Salvar Vídeo
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div>
+                  <Label className="text-sm font-medium">Imagem de Fundo Atual</Label>
+                  <div className="mt-2 relative aspect-video overflow-hidden rounded-md border">
+                    <img 
+                      src={content.hero.backgroundImage} 
+                      alt="Hero Background" 
+                      className="w-full h-full object-cover"
+                    />
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          className="absolute bottom-2 right-2"
+                        >
+                          <ImageIcon className="h-4 w-4 mr-2" /> Alterar Imagem
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Alterar Imagem de Fundo</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 mt-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="imageUrl">URL da Imagem</Label>
+                            <Input 
+                              id="imageUrl" 
+                              placeholder="https://exemplo.com/imagem.jpg" 
+                              defaultValue={content.hero.backgroundImage}
+                            />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            {[
+                              "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2070&auto=format&fit=crop",
+                              "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1170&auto=format&fit=crop",
+                              "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2070&auto=format&fit=crop",
+                              "https://images.unsplash.com/photo-1600585152220-90462f5dbd88?q=80&w=2070&auto=format&fit=crop"
+                            ].map((img, index) => (
+                              <div 
+                                key={index} 
+                                className="cursor-pointer border rounded-md overflow-hidden aspect-video hover:opacity-75 transition-opacity"
+                                onClick={() => handleImageChange(img, "hero")}
+                              >
+                                <img src={img} alt={`Option ${index+1}`} className="w-full h-full object-cover" />
+                              </div>
+                            ))}
+                          </div>
+                          <Button 
+                            className="w-full" 
+                            onClick={() => {
+                              const input = document.getElementById("imageUrl") as HTMLInputElement;
+                              if (input.value) {
+                                handleImageChange(input.value, "hero");
+                              }
+                            }}
+                          >
+                            Salvar Imagem
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -257,6 +367,48 @@ const AdminContent = () => {
                       onChange={handleContentChange} 
                     />
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="useVideo" 
+                      checked={(tempContent as any).useVideo || false}
+                      onCheckedChange={(checked) => handleToggleChange("useVideo", checked)}
+                    />
+                    <Label htmlFor="useVideo">Usar vídeo em vez de imagem</Label>
+                  </div>
+                  
+                  {(tempContent as any).useVideo && (
+                    <div className="space-y-2">
+                      <Label htmlFor="videoUrl">URL do Vídeo (YouTube ou Vimeo)</Label>
+                      <Input 
+                        id="videoUrl" 
+                        name="videoUrl" 
+                        value={(tempContent as any).videoUrl || ""} 
+                        onChange={handleContentChange}
+                        placeholder="https://www.youtube.com/watch?v=..."
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Insira um link do YouTube ou Vimeo
+                      </p>
+                      {videoError && (
+                        <Alert variant="destructive" className="mt-2">
+                          <AlertDescription>{videoError}</AlertDescription>
+                        </Alert>
+                      )}
+                    </div>
+                  )}
+                  
+                  {!(tempContent as any).useVideo && (
+                    <div className="space-y-2">
+                      <Label htmlFor="backgroundImage">URL da Imagem de Fundo</Label>
+                      <Input 
+                        id="backgroundImage" 
+                        name="backgroundImage" 
+                        value={(tempContent as any).backgroundImage || ""} 
+                        onChange={handleContentChange} 
+                      />
+                    </div>
+                  )}
+                  
                   <div className="flex justify-end">
                     <Button 
                       type="button" 
@@ -457,6 +609,77 @@ const AdminContent = () => {
                 <Label className="text-sm font-medium">Descrição Atual</Label>
                 <p className="mt-1 p-2 border rounded-md bg-muted/50">{content.cta.description}</p>
               </div>
+              
+              {content.cta.useVideo && (
+                <div>
+                  <Label className="text-sm font-medium">Vídeo Atual</Label>
+                  <div className="mt-2 relative aspect-video overflow-hidden rounded-md border">
+                    {content.cta.videoUrl ? (
+                      <iframe 
+                        src={content.cta.videoUrl.replace('watch?v=', 'embed/')} 
+                        className="w-full h-full" 
+                        title="CTA Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full bg-muted">
+                        <p className="text-muted-foreground">Nenhum vídeo configurado</p>
+                      </div>
+                    )}
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          className="absolute bottom-2 right-2"
+                        >
+                          <Video className="h-4 w-4 mr-2" /> Alterar Vídeo
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Alterar Vídeo</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 mt-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="ctaVideoUrl">URL do Vídeo (YouTube ou Vimeo)</Label>
+                            <Input 
+                              id="ctaVideoUrl" 
+                              placeholder="https://www.youtube.com/watch?v=..." 
+                              defaultValue={content.cta.videoUrl}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Insira um link do YouTube ou Vimeo
+                            </p>
+                          </div>
+                          <Button 
+                            className="w-full" 
+                            onClick={() => {
+                              const input = document.getElementById("ctaVideoUrl") as HTMLInputElement;
+                              if (input.value) {
+                                if (isValidVideoUrl(input.value)) {
+                                  setContent(prev => ({
+                                    ...prev,
+                                    cta: {
+                                      ...prev.cta,
+                                      videoUrl: input.value
+                                    }
+                                  }));
+                                  toast.success("Vídeo atualizado com sucesso!");
+                                } else {
+                                  toast.error("URL de vídeo inválida. Use apenas links do YouTube ou Vimeo.");
+                                }
+                              }
+                            }}
+                          >
+                            Salvar Vídeo
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -486,6 +709,36 @@ const AdminContent = () => {
                       onChange={handleContentChange} 
                     />
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch 
+                      id="useVideo" 
+                      checked={(tempContent as any).useVideo || false}
+                      onCheckedChange={(checked) => handleToggleChange("useVideo", checked)}
+                    />
+                    <Label htmlFor="useVideo">Adicionar vídeo a esta seção</Label>
+                  </div>
+                  
+                  {(tempContent as any).useVideo && (
+                    <div className="space-y-2">
+                      <Label htmlFor="videoUrl">URL do Vídeo (YouTube ou Vimeo)</Label>
+                      <Input 
+                        id="videoUrl" 
+                        name="videoUrl" 
+                        value={(tempContent as any).videoUrl || ""} 
+                        onChange={handleContentChange}
+                        placeholder="https://www.youtube.com/watch?v=..."
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Insira um link do YouTube ou Vimeo
+                      </p>
+                      {videoError && (
+                        <Alert variant="destructive" className="mt-2">
+                          <AlertDescription>{videoError}</AlertDescription>
+                        </Alert>
+                      )}
+                    </div>
+                  )}
+                  
                   <div className="flex justify-end">
                     <Button 
                       type="button" 
@@ -511,6 +764,7 @@ const AdminContent = () => {
               <h3 className="font-medium">Como usar este painel</h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Clique em "Editar Conteúdo" para modificar textos de cada seção. Para alterar imagens, clique em "Alterar Imagem".
+                Você também pode adicionar vídeos do YouTube ou Vimeo às seções Hero e CTA.
                 Depois de fazer todas as alterações desejadas, clique em "Aplicar Alterações" no topo da página para publicar as mudanças no site.
               </p>
             </div>

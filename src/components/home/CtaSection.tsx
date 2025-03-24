@@ -11,6 +11,15 @@ export function CtaSection({ addToRefs }: CtaSectionProps) {
   const isMobile = useIsMobile();
   const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
   
+  // Em um app real, esses dados viriam do backend
+  // Aqui estamos apenas simulando para demonstrar a funcionalidade
+  const ctaContent = {
+    title: "Transforme seu espaço com a Casa Branca",
+    description: "Entre em contato para um orçamento personalizado e dê o primeiro passo para a reforma dos seus sonhos.",
+    useVideo: false,
+    videoUrl: ""
+  };
+  
   return (
     <section className="py-12 md:py-32">
       <div className="container px-4 md:px-6 mx-auto">
@@ -18,12 +27,25 @@ export function CtaSection({ addToRefs }: CtaSectionProps) {
           className="relative overflow-hidden rounded-2xl bg-primary px-4 sm:px-6 py-10 sm:py-16 text-center text-primary-foreground md:px-16 md:py-24"
           ref={(el) => addToRefs(el, 16)}
         >
+          {ctaContent.useVideo && ctaContent.videoUrl && (
+            <div className="absolute inset-0 pointer-events-none">
+              <iframe 
+                src={ctaContent.videoUrl.replace('youtube.com/watch?v=', 'youtube.com/embed/')} 
+                title="CTA Background Video"
+                className="absolute w-full h-full top-0 left-0 object-cover"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+              <div className="absolute inset-0 bg-primary bg-opacity-60"></div>
+            </div>
+          )}
+          
           <div className="relative mx-auto max-w-2xl">
             <h2 className="text-xl sm:text-3xl font-medium tracking-tight sm:text-4xl md:text-5xl">
-              Transforme seu espaço com a Casa Branca
+              {ctaContent.title}
             </h2>
             <p className="mt-3 sm:mt-6 text-sm sm:text-lg leading-relaxed text-primary-foreground/90">
-              Entre em contato para um orçamento personalizado e dê o primeiro passo para a reforma dos seus sonhos.
+              {ctaContent.description}
             </p>
             <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
               <Button asChild size={isMobile ? "default" : "lg"} variant="secondary" className="w-full sm:w-auto">
