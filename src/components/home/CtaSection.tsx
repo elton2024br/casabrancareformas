@@ -1,7 +1,7 @@
 
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from "react-router-dom";
 
 interface CtaSectionProps {
   addToRefs: (el: HTMLElement | null, index: number) => void;
@@ -9,6 +9,7 @@ interface CtaSectionProps {
 
 export function CtaSection({ addToRefs }: CtaSectionProps) {
   const isMobile = useIsMobile();
+  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
   
   return (
     <section className="py-12 md:py-32">
@@ -26,7 +27,9 @@ export function CtaSection({ addToRefs }: CtaSectionProps) {
             </p>
             <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
               <Button asChild size={isMobile ? "default" : "lg"} variant="secondary" className="w-full sm:w-auto">
-                <Link to="/contato">Solicitar Orçamento</Link>
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  Solicitar Orçamento
+                </a>
               </Button>
               <Button asChild size={isMobile ? "default" : "lg"} variant="outline" className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 mt-3 sm:mt-0">
                 <Link to="/portfolio">Ver Projetos</Link>

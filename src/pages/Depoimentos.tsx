@@ -55,6 +55,7 @@ const testimonials: Testimonial[] = [
 
 const Depoimentos = () => {
   const observedElementsRef = useRef<(HTMLElement | null)[]>([]);
+  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
 
   useEffect(() => {
     const observedElements = observedElementsRef.current.filter(Boolean) as HTMLElement[];
@@ -139,7 +140,9 @@ const Depoimentos = () => {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
               <Button asChild size="lg">
-                <Link to="/contato">Solicitar Orçamento</Link>
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  Solicitar Orçamento
+                </a>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link to="/portfolio">Ver Projetos</Link>

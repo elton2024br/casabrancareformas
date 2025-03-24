@@ -60,6 +60,7 @@ const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [filteredProjects, setFilteredProjects] = useState(portfolioProjects);
   const observedElementsRef = useRef<(HTMLElement | null)[]>([]);
+  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
 
   useEffect(() => {
     if (selectedCategory === "Todos") {
@@ -182,7 +183,9 @@ const Portfolio = () => {
               Entre em contato para discutir seu projeto e transformar seu espaço.
             </p>
             <Button asChild size="lg">
-              <Link to="/contato">Solicitar Orçamento</Link>
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                Solicitar Orçamento
+              </a>
             </Button>
           </div>
         </div>

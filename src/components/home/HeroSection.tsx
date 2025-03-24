@@ -1,7 +1,7 @@
 
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from "react-router-dom";
 
 interface HeroSectionProps {
   addToRefs: (el: HTMLElement | null, index: number) => void;
@@ -9,6 +9,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ addToRefs }: HeroSectionProps) {
   const isMobile = useIsMobile();
+  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
 
   return (
     <section className="relative flex min-h-[80vh] sm:min-h-[90vh] items-center justify-center overflow-hidden bg-black">
@@ -35,7 +36,9 @@ export function HeroSection({ addToRefs }: HeroSectionProps) {
               <Link to="/portfolio">Ver Projetos</Link>
             </Button>
             <Button asChild variant="outline" size={isMobile ? "default" : "lg"} className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10 mt-3 sm:mt-0">
-              <Link to="/contato">Solicitar Orçamento</Link>
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                Solicitar Orçamento
+              </a>
             </Button>
           </div>
         </div>

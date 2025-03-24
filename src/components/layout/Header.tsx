@@ -42,6 +42,9 @@ const Header = () => {
     { name: 'Contato', path: '/contato' }
   ];
 
+  // WhatsApp URL with pre-filled message
+  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
+
   return (
     <header
       className={cn(
@@ -72,7 +75,9 @@ const Header = () => {
             </Link>
           ))}
           <Button asChild size="sm">
-            <Link to="/contato">Orçamento</Link>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              Orçamento
+            </a>
           </Button>
         </nav>
 
@@ -106,9 +111,14 @@ const Header = () => {
               </Link>
             ))}
             <Button asChild className="w-full sm:w-auto mt-4">
-              <Link to="/contato" onClick={() => setIsMenuOpen(false)}>
+              <a 
+                href={whatsappUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Solicitar Orçamento
-              </Link>
+              </a>
             </Button>
             <Link 
               to="/admin" 

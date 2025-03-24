@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import { SectionHeading } from "@/components/ui/section-heading";
 import ContactForm from "@/components/forms/ContactForm";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const contactInfo = [
   {
@@ -15,9 +16,9 @@ const contactInfo = [
   },
   {
     icon: <Phone className="h-6 w-6 text-primary" />,
-    title: "Telefone",
-    details: "(11) 99999-9999",
-    link: "tel:+5511999999999",
+    title: "Telefone/WhatsApp",
+    details: "(12) 99776-7048",
+    link: "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.",
   },
   {
     icon: <MapPin className="h-6 w-6 text-primary" />,
@@ -34,6 +35,7 @@ const contactInfo = [
 
 const Contato = () => {
   const observedElementsRef = useRef<(HTMLElement | null)[]>([]);
+  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
 
   useEffect(() => {
     const observedElements = observedElementsRef.current.filter(Boolean) as HTMLElement[];
@@ -84,6 +86,13 @@ const Contato = () => {
               subtitle="Estamos prontos para transformar seu espaço. Fale conosco!"
               centered
             />
+            <div className="pt-4">
+              <Button asChild size="lg">
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  Solicitar Orçamento via WhatsApp
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -105,8 +114,8 @@ const Contato = () => {
                         <a
                           href={item.link}
                           className="text-muted-foreground hover:text-primary transition-colors"
-                          target={item.title === "Endereço" ? "_blank" : undefined}
-                          rel={item.title === "Endereço" ? "noopener noreferrer" : undefined}
+                          target={item.title === "Endereço" || item.title === "Telefone/WhatsApp" ? "_blank" : undefined}
+                          rel={item.title === "Endereço" || item.title === "Telefone/WhatsApp" ? "noopener noreferrer" : undefined}
                         >
                           {item.details}
                         </a>
