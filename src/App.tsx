@@ -1,10 +1,24 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// Import pages
 import Index from "./pages/Index";
+import Portfolio from "./pages/Portfolio";
+import Depoimentos from "./pages/Depoimentos";
+import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
+
+// Import admin pages
+import Login from "./pages/admin/Login";
+import AdminLayout from "./components/admin/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard";
+import AdminPortfolio from "./pages/admin/AdminPortfolio";
+import AdminDepoimentos from "./pages/admin/AdminDepoimentos";
+import AdminContatos from "./pages/admin/AdminContatos";
 
 const queryClient = new QueryClient();
 
@@ -15,8 +29,22 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/depoimentos" element={<Depoimentos />} />
+          <Route path="/contato" element={<Contato />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<Login />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="portfolio" element={<AdminPortfolio />} />
+            <Route path="depoimentos" element={<AdminDepoimentos />} />
+            <Route path="contatos" element={<AdminContatos />} />
+          </Route>
+          
+          {/* Catch-all route for 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
