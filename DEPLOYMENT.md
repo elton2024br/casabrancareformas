@@ -1,46 +1,46 @@
 
-# Deployment Guide for HostGator Brazil
+# Guia de Deployment para HostGator Brasil
 
-This guide will help you deploy your React application to HostGator Brazil's shared hosting.
+Este guia irá ajudá-lo a fazer o deployment da sua aplicação React na hospedagem compartilhada do HostGator Brasil.
 
-## Prerequisites
+## Pré-requisitos
 
-- HostGator Brazil hosting account
-- FTP client (like FileZilla) or access to HostGator's file manager
-- Node.js installed on your local machine
+- Conta de hospedagem no HostGator Brasil
+- Cliente FTP (como FileZilla) ou acesso ao gerenciador de arquivos do HostGator
+- Node.js instalado em sua máquina local
 
-## Build Process
+## Processo de Build
 
-1. Open your terminal/command prompt
-2. Navigate to your project directory
-3. Run the build command:
+1. Abra seu terminal/prompt de comando
+2. Navegue até o diretório do seu projeto
+3. Execute o comando de build:
    ```
    npm run build
    ```
-4. This will create a `dist` folder with your production-ready files
+4. Isso criará uma pasta `dist` com seus arquivos prontos para produção
 
-## Uploading to HostGator
+## Upload para o HostGator
 
-1. Connect to your HostGator account using FTP or the file manager
-2. Navigate to the public_html directory (or the directory where you want to host the site)
-3. Upload all contents from your local `dist` folder to this directory
+1. Conecte-se à sua conta do HostGator usando FTP ou o gerenciador de arquivos
+2. Navegue até o diretório public_html (ou o diretório onde você deseja hospedar o site)
+3. Faça upload de todo o conteúdo da sua pasta local `dist` para este diretório
 
-## Setting up for Client-Side Routing
+## Configuração para Roteamento do lado do Cliente
 
-The `.htaccess` file is already included in your project and will be uploaded with the rest of the files. This handles redirects for client-side routing.
+O arquivo `.htaccess` já está incluído em seu projeto e será carregado com o resto dos arquivos. Isso gerencia os redirecionamentos para o roteamento do lado do cliente.
 
-## Testing Your Deployment
+## Testando seu Deployment
 
-1. Visit your domain in a web browser
-2. Navigate to different pages to ensure routing works properly
-3. Test all functionality, especially the Supabase integration
+1. Visite seu domínio em um navegador
+2. Navegue para diferentes páginas para garantir que o roteamento funcione corretamente
+3. Teste todas as funcionalidades, especialmente a integração com o Supabase
 
-## Troubleshooting
+## Solução de Problemas
 
-- If routes don't work, ensure the `.htaccess` file was uploaded correctly
-- If API calls fail, check your Supabase configuration
-- For any server errors, check the error logs in your HostGator control panel
+- Se as rotas não funcionarem, verifique se o arquivo `.htaccess` foi carregado corretamente
+- Se as chamadas de API falharem, verifique sua configuração do Supabase
+- Para quaisquer erros do servidor, verifique os logs de erro no painel de controle do HostGator
 
-## Note on Environment Variables
+## Nota sobre Variáveis de Ambiente
 
-The Supabase URL and key are compiled into your application during the build process. If you need to change these later, you'll need to update them in your code and rebuild the application.
+A URL e a chave do Supabase são compiladas em sua aplicação durante o processo de build. Se você precisar alterá-las posteriormente, será necessário atualizá-las em seu código e reconstruir a aplicação.
