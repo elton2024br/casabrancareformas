@@ -1,11 +1,11 @@
+
 import { useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Phone } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TestimonialCard, type Testimonial } from "@/components/ui/testimonial-card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 // Mock data for testimonials
 const testimonials: Testimonial[] = [
@@ -89,9 +89,6 @@ const Depoimentos = () => {
     }
   };
 
-  const whatsappNumber = "5512997767048";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá! Gostaria de solicitar um orçamento para um projeto.`;
-
   return (
     <>
       <Header />
@@ -141,11 +138,8 @@ const Depoimentos = () => {
               Entre em contato conosco para discutir seu projeto e fazer parte da nossa lista de clientes satisfeitos.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-              <Button asChild size="lg" className="flex items-center gap-2">
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  <Phone size={18} />
-                  <span>12 99776-7048</span>
-                </a>
+              <Button asChild size="lg">
+                <Link to="/contato">Solicitar Orçamento</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
                 <Link to="/portfolio">Ver Projetos</Link>

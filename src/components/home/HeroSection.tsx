@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Phone } from "lucide-react";
 
 interface HeroSectionProps {
   addToRefs: (el: HTMLElement | null, index: number) => void;
@@ -10,8 +9,6 @@ interface HeroSectionProps {
 
 export function HeroSection({ addToRefs }: HeroSectionProps) {
   const isMobile = useIsMobile();
-  const whatsappNumber = "5512997767048";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá! Gostaria de solicitar um orçamento.`;
 
   return (
     <section className="relative flex min-h-[80vh] sm:min-h-[90vh] items-center justify-center overflow-hidden bg-black">
@@ -37,11 +34,8 @@ export function HeroSection({ addToRefs }: HeroSectionProps) {
             <Button asChild size={isMobile ? "default" : "lg"} className="w-full sm:w-auto">
               <Link to="/portfolio">Ver Projetos</Link>
             </Button>
-            <Button asChild variant="outline" size={isMobile ? "default" : "lg"} className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10 mt-3 sm:mt-0 flex items-center gap-2">
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                <Phone size={isMobile ? 16 : 18} />
-                <span>12 99776-7048</span>
-              </a>
+            <Button asChild variant="outline" size={isMobile ? "default" : "lg"} className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10 mt-3 sm:mt-0">
+              <Link to="/contato">Solicitar Orçamento</Link>
             </Button>
           </div>
         </div>

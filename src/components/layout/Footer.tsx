@@ -4,8 +4,6 @@ import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin } from 'lucide-react
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const whatsappNumber = "5512997767048";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá! Gostaria de solicitar um orçamento.`;
   
   return (
     <footer className="bg-secondary pt-16 pb-8 border-t">
@@ -83,13 +81,11 @@ const Footer = () => {
                 contato@casabrancareformas.com
               </a>
               <a 
-                href={whatsappUrl} 
-                target="_blank"
-                rel="noopener noreferrer"
+                href="tel:+5511999999999" 
                 className="flex items-center text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Phone size={18} className="mr-2" />
-                (12) 99776-7048 (WhatsApp)
+                (11) 99999-9999
               </a>
               <div className="flex items-start text-muted-foreground">
                 <MapPin size={18} className="mr-2 mt-1 flex-shrink-0" />
