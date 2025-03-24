@@ -1,7 +1,7 @@
 
 import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Award, Clock, Tool } from "lucide-react";
+import { ArrowRight, Award, Clock, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProjectCard, type Project } from "@/components/ui/project-card";
@@ -56,7 +56,7 @@ const testimonials: Testimonial[] = [
 // Services data
 const services = [
   {
-    icon: <Tool className="h-10 w-10 text-primary" />,
+    icon: <Wrench className="h-10 w-10 text-primary" />,
     title: "Reformas Completas",
     description: "Transformamos completamente seu espaço com projetos personalizados e execução impecável.",
   },
