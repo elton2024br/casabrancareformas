@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Edit, Trash2, Plus, Image } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { type Project } from "@/components/ui/project-card";
+import { FreepikImageSelector } from "@/components/admin/FreepikImageSelector";
 
 // Mock data for portfolio projects
 const initialProjects: Project[] = [
@@ -100,6 +101,11 @@ const AdminPortfolio = () => {
     setIsAddMode(false);
   };
 
+  const handleFreepikImageSelect = (imageUrl: string) => {
+    setFormData((prev) => ({ ...prev, imageUrl }));
+    toast.success("Imagem selecionada com sucesso!");
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -155,15 +161,29 @@ const AdminPortfolio = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="imageUrl">URL da Imagem</Label>
-                <Input
-                  id="imageUrl"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleChange}
-                  placeholder="https://exemplo.com/imagem.jpg"
-                  required
-                />
+                <Label htmlFor="imageUrl">Imagem</Label>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1">
+                    <Input
+                      id="imageUrl"
+                      name="imageUrl"
+                      value={formData.imageUrl}
+                      onChange={handleChange}
+                      placeholder="https://exemplo.com/imagem.jpg"
+                      required
+                    />
+                  </div>
+                  <FreepikImageSelector onImageSelect={handleFreepikImageSelect} />
+                </div>
+                {formData.imageUrl && (
+                  <div className="mt-2 rounded-md overflow-hidden border aspect-video">
+                    <img
+                      src={formData.imageUrl}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
               <div className="flex justify-end space-x-4">
                 <Button type="button" variant="outline" onClick={handleCancel}>
