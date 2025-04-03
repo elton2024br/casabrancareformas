@@ -16,6 +16,8 @@ export interface Project {
   imageUrl: string;
   category: string;
   featured?: boolean;
+  altText?: string;
+  keywords?: string[];
 }
 
 interface ProjectCardProps {
@@ -39,7 +41,7 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
         {/* Image */}
         <img
           src={project.imageUrl}
-          alt={project.title}
+          alt={project.altText || project.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         
@@ -87,7 +89,7 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
                     <DialogContent className="max-w-5xl p-1 bg-transparent border-none">
                       <img 
                         src={project.imageUrl} 
-                        alt={project.title} 
+                        alt={project.altText || project.title} 
                         className="w-full h-auto" 
                       />
                     </DialogContent>
