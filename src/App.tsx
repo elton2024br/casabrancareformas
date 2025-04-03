@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 // Import pages
 import Index from "./pages/Index";
 import Portfolio from "./pages/Portfolio";
+import ProjectDetail from "./pages/ProjectDetail";
 import Depoimentos from "./pages/Depoimentos";
 import Contato from "./pages/Contato";
 import About from "./pages/About";
@@ -37,6 +38,7 @@ function App() {
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/portfolio/:id" element={<ProjectDetail />} />
             <Route path="/depoimentos" element={<Depoimentos />} />
             <Route path="/contato" element={<Contato />} />
             <Route path="/sobre" element={<About />} />

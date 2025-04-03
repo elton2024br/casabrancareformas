@@ -155,6 +155,7 @@ const Portfolio = () => {
                 <ProjectCard
                   key={project.id}
                   project={project}
+                  enableModalView={true}
                   ref={(el) => addToRefs(el, 2 + index)}
                 />
               ))}

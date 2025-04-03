@@ -2,6 +2,12 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { forwardRef } from "react";
+import { Maximize } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export interface Project {
   id: string;
@@ -16,10 +22,11 @@ interface ProjectCardProps {
   project: Project;
   className?: string;
   featured?: boolean;
+  enableModalView?: boolean;
 }
 
 export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
-  ({ project, className, featured = false }, ref) => {
+  ({ project, className, featured = false, enableModalView = false }, ref) => {
     return (
       <div 
         ref={ref}
@@ -45,26 +52,48 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
               </span>
               <h3 className="text-xl font-medium text-white">{project.title}</h3>
               <p className="mt-1 line-clamp-2 text-sm text-white/80">{project.description}</p>
-              <Link
-                to={`/portfolio/${project.id}`}
-                className="mt-3 inline-flex items-center text-sm font-medium text-white hover:text-primary"
-              >
-                Ver Projeto
-                <svg
-                  className="ml-1 h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
+              <div className="mt-3 flex items-center justify-between">
+                <Link
+                  to={`/portfolio/${project.id}`}
+                  className="inline-flex items-center text-sm font-medium text-white hover:text-primary"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </Link>
+                  Ver Projeto
+                  <svg
+                    className="ml-1 h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </Link>
+
+                {enableModalView && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button 
+                        className="text-white hover:text-primary rounded-full p-1 bg-black/30 flex items-center justify-center"
+                        aria-label="Ampliar imagem"
+                      >
+                        <Maximize className="h-4 w-4" />
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-5xl p-1 bg-transparent border-none">
+                      <img 
+                        src={project.imageUrl} 
+                        alt={project.title} 
+                        className="w-full h-auto" 
+                      />
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
             </div>
           </div>
         </div>

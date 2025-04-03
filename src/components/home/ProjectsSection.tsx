@@ -61,6 +61,7 @@ export function ProjectsSection({ addToRefs }: ProjectsSectionProps) {
               <ProjectCard
                 project={project}
                 featured={index === 0}
+                enableModalView={true}
                 className={index === 0 ? "md:col-span-2" : ""}
               />
             </div>
