@@ -1,28 +1,49 @@
 
 import { Link } from "react-router-dom";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface ProjectBreadcrumbProps {
   title: string;
+  category?: string;
 }
 
-export function ProjectBreadcrumb({ title }: ProjectBreadcrumbProps) {
+export function ProjectBreadcrumb({ title, category }: ProjectBreadcrumbProps) {
   return (
-    <nav className="mb-8">
-      <ol className="flex items-center space-x-2 text-sm">
-        <li>
-          <Link to="/" className="text-muted-foreground hover:text-primary">
-            Início
-          </Link>
-        </li>
-        <li className="text-muted-foreground">/</li>
-        <li>
-          <Link to="/portfolio" className="text-muted-foreground hover:text-primary">
-            Portfólio
-          </Link>
-        </li>
-        <li className="text-muted-foreground">/</li>
-        <li className="font-medium text-primary">{title}</li>
-      </ol>
-    </nav>
+    <Breadcrumb className="mb-8">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link to="/">Início</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link to="/portfolio">Portfólio</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        {category && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to={`/portfolio?categoria=${encodeURIComponent(category)}`}>{category}</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </>
+        )}
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{title}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 }
