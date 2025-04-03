@@ -6,50 +6,63 @@ import Footer from "@/components/layout/Footer";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProjectCard, type Project } from "@/components/ui/project-card";
 import { Button } from "@/components/ui/button";
+import { SeoMeta } from "@/components/ui/seo-meta";
 
-// Mock data for portfolio projects
+// Mock data for portfolio projects with improved SEO content
 const portfolioProjects: Project[] = [
   {
     id: "1",
-    title: "Residência Moderna",
-    description: "Reforma completa de apartamento de 120m² com conceito aberto e design minimalista.",
+    title: "Residência Moderna em São Paulo",
+    description: "Reforma completa de apartamento de 120m² com conceito aberto e design minimalista. Integração de ambientes, iluminação planejada e materiais sustentáveis.",
     imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1170&auto=format&fit=crop",
     category: "Apartamento",
+    altText: "Interior moderno de apartamento reformado com sala integrada à cozinha, móveis contemporâneos e iluminação natural",
+    keywords: ["reforma apartamento", "design minimalista", "integração de ambientes", "apartamento moderno"]
   },
   {
     id: "2",
-    title: "Cozinha Escandinava",
-    description: "Reforma de cozinha com inspiração escandinava, priorizando funcionalidade e elegância.",
+    title: "Cozinha Escandinava Planejada",
+    description: "Reforma de cozinha com inspiração escandinava, priorizando funcionalidade e elegância. Armários planejados, bancadas em quartzo e iluminação estratégica.",
     imageUrl: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1170&auto=format&fit=crop",
     category: "Cozinha",
+    altText: "Cozinha em estilo escandinavo com armários brancos, bancada em quartzo, ilha central e pendentes decorativos",
+    keywords: ["reforma de cozinha", "cozinha escandinava", "cozinha planejada", "design de interiores"]
   },
   {
     id: "3",
-    title: "Escritório Corporativo",
-    description: "Projeto de reforma para escritório corporativo com foco em produtividade e bem-estar.",
+    title: "Escritório Corporativo Moderno",
+    description: "Projeto de reforma para escritório corporativo com foco em produtividade e bem-estar. Divisórias acústicas, estações de trabalho ergonômicas e espaços colaborativos.",
     imageUrl: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1169&auto=format&fit=crop",
     category: "Comercial",
+    altText: "Escritório corporativo com design moderno, estações de trabalho colaborativas e amplas janelas",
+    keywords: ["reforma escritório", "espaço comercial", "design corporativo", "ergonomia no trabalho"]
   },
   {
     id: "4",
-    title: "Banheiro Luxuoso",
-    description: "Reforma de banheiro com acabamentos premium e iluminação planejada.",
+    title: "Banheiro Luxuoso com Mármore",
+    description: "Reforma de banheiro com acabamentos premium e iluminação planejada. Revestimentos em mármore, metais dourados e box de vidro temperado do piso ao teto.",
     imageUrl: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?q=80&w=1287&auto=format&fit=crop",
     category: "Banheiro",
+    altText: "Banheiro luxuoso com revestimentos em mármore, banheira e metais dourados",
+    keywords: ["reforma de banheiro", "banheiro de luxo", "revestimento em mármore", "iluminação de banheiro"]
   },
   {
     id: "5",
     title: "Sala de Estar Contemporânea",
-    description: "Reforma de sala de estar com design contemporâneo e mobiliário personalizado.",
+    description: "Reforma de sala de estar com design contemporâneo e mobiliário personalizado. Painéis ripados, iluminação indireta e automação residencial integrada.",
     imageUrl: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1558&auto=format&fit=crop",
     category: "Sala",
+    altText: "Sala de estar contemporânea com sofá modular, painel de TV ripado e iluminação indireta",
+    keywords: ["reforma de sala", "design de interiores", "sala contemporânea", "automação residencial"]
   },
   {
     id: "6",
-    title: "Café Artesanal",
-    description: "Projeto comercial para café artesanal com atmosfera acolhedora e funcional.",
+    title: "Café Artesanal em São Paulo",
+    description: "Projeto comercial para café artesanal com atmosfera acolhedora e funcional. Balcão em madeira maciça, iluminação pendente e mobiliário sob medida.",
     imageUrl: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1170&auto=format&fit=crop",
     category: "Comercial",
+    altText: "Interior de café artesanal com balcão de madeira, banquetas e iluminação pendente",
+    keywords: ["projeto comercial", "reforma de café", "design de interiores comercial", "mobiliário sob medida"]
   },
 ];
 
@@ -60,7 +73,7 @@ const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [filteredProjects, setFilteredProjects] = useState(portfolioProjects);
   const observedElementsRef = useRef<(HTMLElement | null)[]>([]);
-  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
+  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento%20para%20meu%20projeto.";
 
   useEffect(() => {
     if (selectedCategory === "Todos") {
@@ -107,6 +120,12 @@ const Portfolio = () => {
 
   return (
     <>
+      <SeoMeta 
+        title="Portfólio de Projetos | Casa Branca Reformas e Design de Interiores"
+        description="Conheça nosso portfólio de reformas residenciais e comerciais. Projetos de design de interiores para apartamentos, cozinhas, banheiros e espaços comerciais em São Paulo."
+        keywords="portfólio de reformas, projetos de design de interiores, reforma apartamento, reforma comercial, reforma residencial"
+      />
+      
       <Header />
       
       {/* Hero Section */}
@@ -117,10 +136,14 @@ const Portfolio = () => {
             ref={(el) => addToRefs(el, 0)}
           >
             <SectionHeading
-              title="Nosso Portfólio"
-              subtitle="Confira nossos projetos e transformações em diversos espaços"
+              title="Portfólio de Projetos e Reformas"
+              subtitle="Confira nossas transformações em residências e espaços comerciais em São Paulo e região"
               centered
             />
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Cada projeto é único e desenvolvido para atender às necessidades específicas de nossos clientes,
+              com o máximo de qualidade, funcionalidade e estética.
+            </p>
           </div>
         </div>
       </section>
@@ -138,6 +161,7 @@ const Portfolio = () => {
                 variant={selectedCategory === category ? "default" : "outline"}
                 onClick={() => setSelectedCategory(category)}
                 className="transition-all duration-200"
+                aria-pressed={selectedCategory === category}
               >
                 {category}
               </Button>
@@ -167,6 +191,21 @@ const Portfolio = () => {
               </p>
             </div>
           )}
+          
+          {/* Schema.org structured data for portfolio */}
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              "name": "Portfólio de Projetos | Casa Branca Reformas",
+              "description": "Conheça nosso portfólio de reformas residenciais e comerciais.",
+              "provider": {
+                "@type": "Organization",
+                "name": "Casa Branca Reformas",
+                "url": window.location.origin
+              }
+            })}
+          </script>
         </div>
       </section>
 
@@ -178,16 +217,23 @@ const Portfolio = () => {
             ref={(el) => addToRefs(el, portfolioProjects.length + 2)}
           >
             <h2 className="text-2xl font-medium md:text-3xl">
-              Gostou do que viu?
+              Transforme seu espaço com a Casa Branca Reformas
             </h2>
             <p className="text-muted-foreground">
-              Entre em contato para discutir seu projeto e transformar seu espaço.
+              Entre em contato para discutir seu projeto e receber um orçamento personalizado para transformar seu ambiente.
             </p>
-            <Button asChild size="lg">
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                Solicitar Orçamento
-              </a>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg">
+                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  Solicitar Orçamento
+                </a>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link to="/contato">
+                  Fale Conosco
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
