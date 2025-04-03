@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Portfolio from "./pages/Portfolio";
 import Depoimentos from "./pages/Depoimentos";
 import Contato from "./pages/Contato";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 // Import admin pages
@@ -38,6 +39,7 @@ function App() {
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/depoimentos" element={<Depoimentos />} />
             <Route path="/contato" element={<Contato />} />
+            <Route path="/sobre" element={<About />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<Login />} />
