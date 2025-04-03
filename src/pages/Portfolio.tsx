@@ -1,12 +1,15 @@
 
-import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { ProjectCard, type Project } from "@/components/ui/project-card";
-import { Button } from "@/components/ui/button";
 import { SeoMeta } from "@/components/ui/seo-meta";
+import { type Project } from "@/components/ui/project-card";
+import { PortfolioHero } from "@/components/portfolio/PortfolioHero";
+import { PortfolioFilter } from "@/components/portfolio/PortfolioFilter";
+import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
+import { PortfolioCTA } from "@/components/portfolio/PortfolioCTA";
+import { PortfolioSchemaData } from "@/components/portfolio/PortfolioSchemaData";
+import { usePortfolioAnimation } from "@/components/portfolio/usePortfolioAnimation";
 
 // Mock data for portfolio projects with improved SEO content
 const portfolioProjects: Project[] = [
@@ -72,8 +75,7 @@ const categories = ["Todos", ...Array.from(new Set(portfolioProjects.map(project
 const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [filteredProjects, setFilteredProjects] = useState(portfolioProjects);
-  const observedElementsRef = useRef<(HTMLElement | null)[]>([]);
-  const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento%20para%20meu%20projeto.";
+  const { addToRefs } = usePortfolioAnimation(filteredProjects);
 
   useEffect(() => {
     if (selectedCategory === "Todos") {
@@ -84,39 +86,6 @@ const Portfolio = () => {
       );
     }
   }, [selectedCategory]);
-
-  useEffect(() => {
-    const observedElements = observedElementsRef.current.filter(Boolean) as HTMLElement[];
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-fade-in");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    observedElements.forEach((el) => {
-      el.classList.add("opacity-0");
-      observer.observe(el);
-    });
-
-    return () => {
-      observedElements.forEach((el) => {
-        observer.unobserve(el);
-      });
-    };
-  }, [filteredProjects]);
-
-  const addToRefs = (el: HTMLElement | null, index: number) => {
-    if (el && !observedElementsRef.current.includes(el)) {
-      observedElementsRef.current[index] = el;
-    }
-  };
 
   return (
     <>
@@ -129,114 +98,36 @@ const Portfolio = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-16 md:pt-40 md:pb-20 bg-secondary">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div
-            className="max-w-3xl mx-auto text-center space-y-4"
-            ref={(el) => addToRefs(el, 0)}
-          >
-            <SectionHeading
-              title="Portfólio de Projetos e Reformas"
-              subtitle="Confira nossas transformações em residências e espaços comerciais em São Paulo e região"
-              centered
-            />
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Cada projeto é único e desenvolvido para atender às necessidades específicas de nossos clientes,
-              com o máximo de qualidade, funcionalidade e estética.
-            </p>
-          </div>
-        </div>
-      </section>
+      <div ref={(el) => addToRefs(el, 0)}>
+        <PortfolioHero />
+      </div>
 
       {/* Categories Filter */}
-      <section className="py-8 border-b">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div
-            className="flex flex-wrap gap-2 justify-center"
-            ref={(el) => addToRefs(el, 1)}
-          >
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                onClick={() => setSelectedCategory(category)}
-                className="transition-all duration-200"
-                aria-pressed={selectedCategory === category}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </section>
+      <div ref={(el) => addToRefs(el, 1)}>
+        <PortfolioFilter 
+          categories={categories} 
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
+      </div>
 
       {/* Projects Grid */}
       <section className="py-16 md:py-24">
         <div className="container px-4 md:px-6 mx-auto">
-          {filteredProjects.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredProjects.map((project, index) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  enableModalView={true}
-                  ref={(el) => addToRefs(el, 2 + index)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <p className="text-muted-foreground text-lg">
-                Nenhum projeto encontrado nesta categoria.
-              </p>
-            </div>
-          )}
+          <PortfolioGrid 
+            projects={filteredProjects} 
+            addToRefs={addToRefs}
+          />
           
-          {/* Schema.org structured data for portfolio */}
-          <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "CollectionPage",
-              "name": "Portfólio de Projetos | Casa Branca Reformas",
-              "description": "Conheça nosso portfólio de reformas residenciais e comerciais.",
-              "provider": {
-                "@type": "Organization",
-                "name": "Casa Branca Reformas",
-                "url": window.location.origin
-              }
-            })}
-          </script>
+          <PortfolioSchemaData />
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-secondary">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div
-            className="text-center max-w-3xl mx-auto space-y-6"
-            ref={(el) => addToRefs(el, portfolioProjects.length + 2)}
-          >
-            <h2 className="text-2xl font-medium md:text-3xl">
-              Transforme seu espaço com a Casa Branca Reformas
-            </h2>
-            <p className="text-muted-foreground">
-              Entre em contato para discutir seu projeto e receber um orçamento personalizado para transformar seu ambiente.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg">
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  Solicitar Orçamento
-                </a>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to="/contato">
-                  Fale Conosco
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PortfolioCTA 
+        addToRefs={addToRefs}
+        refIndex={portfolioProjects.length + 2}
+      />
       
       <Footer />
     </>
