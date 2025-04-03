@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,14 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Edit, Save, Image as ImageIcon, RefreshCw, CheckCircle, Video } from "lucide-react";
+import { Edit, Save, Image as ImageIcon, RefreshCw, CheckCircle, Video, Book } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Switch } from "@/components/ui/switch";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
 
-// Mock data for website content (in a real app, this would come from a database)
 const initialContent = {
   hero: {
     title: "Transformamos espaços em experiências",
@@ -26,6 +24,21 @@ const initialContent = {
     title: "Sobre a Casa Branca",
     subtitle: "Tradição e inovação em reformas residenciais e comerciais",
     description: "Fundada há mais de 10 anos, a Casa Branca Reformas se consolidou no mercado com um trabalho minucioso e atento às necessidades de cada cliente. Nossa equipe multidisciplinar une arquitetos, designers e engenheiros para criar soluções completas que transformam espaços em ambientes funcionais e esteticamente impressionantes."
+  },
+  aboutPage: {
+    title: "Conheça Elton "Casabranca"",
+    subtitle: "A história por trás da nossa empresa e do profissional que transformou o mercado de reformas",
+    description: "Desde muito jovem, Elton já demonstrava um interesse natural pela construção civil. Ainda na adolescência, começou a trabalhar como ajudante em pequenas obras, onde descobriu sua verdadeira vocação e ganhou o apelido que carregaria por toda sua vida: "Casabranca".",
+    image: "/lovable-uploads/e71547ce-5de6-44ec-8b00-1ff5abc20379.png",
+    profesionalHistory: "Aos 18 anos, Casabranca já coordenava pequenas equipes em reformas residenciais. A combinação de conhecimento técnico, habilidade prática e um olhar atento para detalhes o diferenciou no mercado. Com o passar dos anos, foi ampliando seu escopo de trabalho, passando de residências para escritórios comerciais e mais tarde para projetos de maior escala.",
+    workPhilosophy: "Para Casabranca, a construção civil não é apenas uma profissão, mas uma forma de transformar ambientes e vidas. Sua filosofia de trabalho baseia-se em três pilares: Excelência técnica, Transparência e Inovação.",
+    certifications: [
+      "Técnico em Edificações - SENAI",
+      "Especialista em Gestão de Projetos - FGV",
+      "Certificação em Técnicas Sustentáveis",
+      "Mais de 15 anos de experiência prática"
+    ],
+    mission: "Transformar espaços físicos em ambientes que inspiram, acolhem e elevam a qualidade de vida das pessoas. Cada projeto é uma oportunidade de fazer a diferença, combinando excelência técnica com uma visão humana da construção civil."
   },
   services: [
     {
@@ -55,11 +68,9 @@ const initialContent = {
   }
 };
 
-// Função para validar URL de vídeo (YouTube ou Vimeo)
 const isValidVideoUrl = (url: string) => {
   if (!url) return false;
   
-  // Regex para validar URLs do YouTube e Vimeo
   const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
   const vimeoRegex = /^(https?:\/\/)?(www\.)?(vimeo\.com)\/.+$/;
   
@@ -73,6 +84,8 @@ const AdminContent = () => {
   const [tempContent, setTempContent] = useState({});
   const [activeTab, setActiveTab] = useState("hero");
   const [videoError, setVideoError] = useState<string | null>(null);
+  const [editingCertification, setEditingCertification] = useState<number | null>(null);
+  const [tempCertification, setTempCertification] = useState("");
 
   const handleEditSection = (section: string) => {
     setEditingSection(section);
@@ -92,7 +105,6 @@ const AdminContent = () => {
     const { name, value } = e.target;
     setTempContent(prev => ({ ...prev, [name]: value }));
     
-    // Limpa o erro de vídeo quando o usuário edita a URL
     if (name === "videoUrl") {
       setVideoError(null);
     }
@@ -104,7 +116,6 @@ const AdminContent = () => {
 
   const handleSaveSection = () => {
     if (editingSection) {
-      // Validar URL de vídeo, se estiver ativada
       const tempContentTyped = tempContent as any;
       if (tempContentTyped.useVideo && tempContentTyped.videoUrl) {
         if (!isValidVideoUrl(tempContentTyped.videoUrl)) {
@@ -140,12 +151,71 @@ const AdminContent = () => {
           [field]: imageUrl 
         } 
       }));
+    } else if (section === "aboutPage") {
+      setContent(prev => ({
+        ...prev,
+        aboutPage: {
+          ...prev.aboutPage,
+          image: imageUrl
+        }
+      }));
     }
     toast.success("Imagem atualizada com sucesso!");
   };
 
+  const handleAddCertification = () => {
+    if (tempCertification.trim()) {
+      setContent(prev => ({
+        ...prev,
+        aboutPage: {
+          ...prev.aboutPage,
+          certifications: [...prev.aboutPage.certifications, tempCertification]
+        }
+      }));
+      setTempCertification("");
+      toast.success("Certificação adicionada com sucesso!");
+    }
+  };
+
+  const handleEditCertification = (index: number) => {
+    setEditingCertification(index);
+    setTempCertification(content.aboutPage.certifications[index]);
+  };
+
+  const handleSaveCertification = () => {
+    if (editingCertification !== null && tempCertification.trim()) {
+      const newCertifications = [...content.aboutPage.certifications];
+      newCertifications[editingCertification] = tempCertification;
+      
+      setContent(prev => ({
+        ...prev,
+        aboutPage: {
+          ...prev.aboutPage,
+          certifications: newCertifications
+        }
+      }));
+      
+      setEditingCertification(null);
+      setTempCertification("");
+      toast.success("Certificação atualizada com sucesso!");
+    }
+  };
+
+  const handleDeleteCertification = (index: number) => {
+    const newCertifications = content.aboutPage.certifications.filter((_, i) => i !== index);
+    
+    setContent(prev => ({
+      ...prev,
+      aboutPage: {
+        ...prev.aboutPage,
+        certifications: newCertifications
+      }
+    }));
+    
+    toast.success("Certificação removida com sucesso!");
+  };
+
   const handleApplyChanges = () => {
-    // In a real app, this would send the data to an API
     toast.success("Todas as alterações foram aplicadas ao site!");
   };
 
@@ -172,14 +242,14 @@ const AdminContent = () => {
         onValueChange={setActiveTab}
         className="space-y-4"
       >
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="about">Sobre Nós</TabsTrigger>
+          <TabsTrigger value="aboutPage">Página Sobre</TabsTrigger>
           <TabsTrigger value="services">Serviços</TabsTrigger>
           <TabsTrigger value="cta">CTA</TabsTrigger>
         </TabsList>
 
-        {/* Hero Section Tab */}
         <TabsContent value="hero" className="space-y-4">
           <Card>
             <CardHeader>
@@ -423,7 +493,6 @@ const AdminContent = () => {
           )}
         </TabsContent>
 
-        {/* About Section Tab */}
         <TabsContent value="about" className="space-y-4">
           <Card>
             <CardHeader>
@@ -505,7 +574,260 @@ const AdminContent = () => {
           )}
         </TabsContent>
 
-        {/* Services Section Tab */}
+        <TabsContent value="aboutPage" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Página Sobre (Detalhes Completos)</CardTitle>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleEditSection("aboutPage")}
+                >
+                  <Edit className="h-4 w-4 mr-2" /> Editar Conteúdo
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div>
+                  <Label className="text-sm font-medium">Título Atual</Label>
+                  <p className="mt-1 p-2 border rounded-md bg-muted/50">{content.aboutPage.title}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Subtítulo Atual</Label>
+                  <p className="mt-1 p-2 border rounded-md bg-muted/50">{content.aboutPage.subtitle}</p>
+                </div>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Descrição Atual</Label>
+                <p className="mt-1 p-2 border rounded-md bg-muted/50 whitespace-pre-wrap">{content.aboutPage.description}</p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">História Profissional Atual</Label>
+                <p className="mt-1 p-2 border rounded-md bg-muted/50 whitespace-pre-wrap">{content.aboutPage.profesionalHistory}</p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Filosofia de Trabalho Atual</Label>
+                <p className="mt-1 p-2 border rounded-md bg-muted/50 whitespace-pre-wrap">{content.aboutPage.workPhilosophy}</p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Missão Atual</Label>
+                <p className="mt-1 p-2 border rounded-md bg-muted/50 whitespace-pre-wrap">{content.aboutPage.mission}</p>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium">Certificações e Formação</Label>
+                <div className="mt-1 p-2 border rounded-md bg-muted/50">
+                  <ul className="space-y-1 list-disc pl-5">
+                    {content.aboutPage.certifications.map((cert, index) => (
+                      <li key={index} className="flex items-center justify-between group">
+                        <span>{cert}</span>
+                        <div className="hidden group-hover:flex space-x-1">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-6 w-6 p-0" 
+                            onClick={() => handleEditCertification(index)}
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-6 w-6 p-0 text-destructive" 
+                            onClick={() => handleDeleteCertification(index)}
+                          >
+                            <span className="text-xs">×</span>
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  {editingCertification !== null ? (
+                    <div className="flex items-center mt-2 space-x-2">
+                      <Input 
+                        value={tempCertification}
+                        onChange={(e) => setTempCertification(e.target.value)}
+                        placeholder="Editar certificação..."
+                        className="flex-1 h-8 text-sm"
+                      />
+                      <Button size="sm" className="h-8" onClick={handleSaveCertification}>Salvar</Button>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-8"
+                        onClick={() => {
+                          setEditingCertification(null);
+                          setTempCertification("");
+                        }}
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center mt-2 space-x-2">
+                      <Input 
+                        value={tempCertification}
+                        onChange={(e) => setTempCertification(e.target.value)}
+                        placeholder="Nova certificação..."
+                        className="flex-1 h-8 text-sm"
+                      />
+                      <Button size="sm" className="h-8" onClick={handleAddCertification}>Adicionar</Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium">Imagem Principal</Label>
+                <div className="mt-2 relative aspect-[4/5] w-full max-w-xs overflow-hidden rounded-md border">
+                  <img 
+                    src={content.aboutPage.image} 
+                    alt="Elton Casabranca" 
+                    className="w-full h-full object-cover"
+                  />
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button 
+                        size="sm" 
+                        className="absolute bottom-2 right-2"
+                      >
+                        <ImageIcon className="h-4 w-4 mr-2" /> Alterar Imagem
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Alterar Imagem</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 mt-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="aboutPageImage">URL da Imagem</Label>
+                          <Input 
+                            id="aboutPageImage" 
+                            placeholder="https://exemplo.com/imagem.jpg" 
+                            defaultValue={content.aboutPage.image}
+                          />
+                        </div>
+                        <Button 
+                          className="w-full" 
+                          onClick={() => {
+                            const input = document.getElementById("aboutPageImage") as HTMLInputElement;
+                            if (input.value) {
+                              handleImageChange(input.value, "aboutPage", "image");
+                            }
+                          }}
+                        >
+                          Salvar Imagem
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {editingSection === "aboutPage" && (
+            <Card className="border-primary/50">
+              <CardHeader>
+                <CardTitle>Editar Página Sobre</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Título</Label>
+                    <Input 
+                      id="title" 
+                      name="title" 
+                      value={(tempContent as any).title || ""} 
+                      onChange={handleContentChange} 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="subtitle">Subtítulo</Label>
+                    <Input 
+                      id="subtitle" 
+                      name="subtitle" 
+                      value={(tempContent as any).subtitle || ""} 
+                      onChange={handleContentChange} 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Descrição Principal</Label>
+                    <Textarea 
+                      id="description" 
+                      name="description" 
+                      rows={3}
+                      value={(tempContent as any).description || ""} 
+                      onChange={handleContentChange} 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="profesionalHistory">História Profissional</Label>
+                    <Textarea 
+                      id="profesionalHistory" 
+                      name="profesionalHistory" 
+                      rows={4}
+                      value={(tempContent as any).profesionalHistory || ""} 
+                      onChange={handleContentChange} 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="workPhilosophy">Filosofia de Trabalho</Label>
+                    <Textarea 
+                      id="workPhilosophy" 
+                      name="workPhilosophy" 
+                      rows={3}
+                      value={(tempContent as any).workPhilosophy || ""} 
+                      onChange={handleContentChange} 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="mission">Missão</Label>
+                    <Textarea 
+                      id="mission" 
+                      name="mission" 
+                      rows={3}
+                      value={(tempContent as any).mission || ""} 
+                      onChange={handleContentChange} 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="image">URL da Imagem</Label>
+                    <Input 
+                      id="image" 
+                      name="image" 
+                      value={(tempContent as any).image || ""} 
+                      onChange={handleContentChange} 
+                    />
+                  </div>
+                  
+                  <div className="flex justify-end">
+                    <Button 
+                      type="button" 
+                      onClick={handleSaveSection}
+                    >
+                      <Save className="h-4 w-4 mr-2" /> Salvar Alterações
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
         <TabsContent value="services" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             {content.services.map((service) => (
@@ -585,7 +907,6 @@ const AdminContent = () => {
           )}
         </TabsContent>
 
-        {/* CTA Section Tab */}
         <TabsContent value="cta" className="space-y-4">
           <Card>
             <CardHeader>
