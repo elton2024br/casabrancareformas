@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,9 +27,9 @@ const initialContent = {
     description: "Fundada há mais de 10 anos, a Casa Branca Reformas se consolidou no mercado com um trabalho minucioso e atento às necessidades de cada cliente. Nossa equipe multidisciplinar une arquitetos, designers e engenheiros para criar soluções completas que transformam espaços em ambientes funcionais e esteticamente impressionantes."
   },
   aboutPage: {
-    title: "Conheça Elton "Casabranca"",
+    title: "Conheça Elton \"Casabranca\"",
     subtitle: "A história por trás da nossa empresa e do profissional que transformou o mercado de reformas",
-    description: "Desde muito jovem, Elton já demonstrava um interesse natural pela construção civil. Ainda na adolescência, começou a trabalhar como ajudante em pequenas obras, onde descobriu sua verdadeira vocação e ganhou o apelido que carregaria por toda sua vida: "Casabranca".",
+    description: "Desde muito jovem, Elton já demonstrava um interesse natural pela construção civil. Ainda na adolescência, começou a trabalhar como ajudante em pequenas obras, onde descobriu sua verdadeira vocação e ganhou o apelido que carregaria por toda sua vida: \"Casabranca\".",
     image: "/lovable-uploads/e71547ce-5de6-44ec-8b00-1ff5abc20379.png",
     profesionalHistory: "Aos 18 anos, Casabranca já coordenava pequenas equipes em reformas residenciais. A combinação de conhecimento técnico, habilidade prática e um olhar atento para detalhes o diferenciou no mercado. Com o passar dos anos, foi ampliando seu escopo de trabalho, passando de residências para escritórios comerciais e mais tarde para projetos de maior escala.",
     workPhilosophy: "Para Casabranca, a construção civil não é apenas uma profissão, mas uma forma de transformar ambientes e vidas. Sua filosofia de trabalho baseia-se em três pilares: Excelência técnica, Transparência e Inovação.",
