@@ -1,14 +1,12 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
-import { Edit, Trash2, Plus, Image } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { type Project } from "@/components/ui/project-card";
-import { FreepikImageSelector } from "@/components/admin/FreepikImageSelector";
+import { ProjectForm } from "@/components/admin/portfolio/ProjectForm";
+import { ProjectCard } from "@/components/admin/portfolio/ProjectCard";
+import { AddProjectCard } from "@/components/admin/portfolio/AddProjectCard";
 
 // Mock data for portfolio projects
 const initialProjects: Project[] = [
@@ -70,27 +68,14 @@ const AdminPortfolio = () => {
     setEditing(null);
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageSelect = (imageUrl: string) => {
-    setFormData((prev) => ({ ...prev, imageUrl }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleSubmit = (updatedProject: Project) => {
     if (isAddMode) {
-      setProjects([...projects, formData]);
+      setProjects([...projects, updatedProject]);
       toast.success("Projeto adicionado com sucesso!");
     } else if (editing) {
       setProjects(
         projects.map((project) =>
-          project.id === editing ? formData : project
+          project.id === editing ? updatedProject : project
         )
       );
       toast.success("Projeto atualizado com sucesso!");
@@ -120,127 +105,27 @@ const AdminPortfolio = () => {
       </div>
 
       {(editing || isAddMode) && (
-        <Card className="border-primary/50 shadow-md">
-          <CardContent className="pt-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid gap-6 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Título do Projeto</Label>
-                  <Input
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    placeholder="Ex: Residência Moderna"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="category">Categoria</Label>
-                  <Input
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    placeholder="Ex: Apartamento, Cozinha, Comercial"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Descrição</Label>
-                <Textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  placeholder="Descrição detalhada do projeto..."
-                  rows={3}
-                  required
-                />
-              </div>
-              
-              {/* Replaced the URL input with our FreepikImageSelector */}
-              <FreepikImageSelector
-                onSelectImage={handleImageSelect}
-                initialQuery={formData.category}
-                selectedImage={formData.imageUrl}
-              />
-              
-              <div className="flex justify-end space-x-4">
-                <Button type="button" variant="outline" onClick={handleCancel}>
-                  Cancelar
-                </Button>
-                <Button type="submit">
-                  {isAddMode ? "Adicionar" : "Atualizar"}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        <ProjectForm
+          project={formData}
+          isAddMode={isAddMode}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
       )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
-          <Card key={project.id} className="overflow-hidden">
-            <div className="aspect-video relative overflow-hidden">
-              <img
-                src={project.imageUrl}
-                alt={project.title}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h3 className="font-medium">{project.title}</h3>
-                  <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                    {project.category}
-                  </span>
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={() => handleEdit(project)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-destructive hover:text-destructive border-destructive/50 hover:border-destructive"
-                    onClick={() => handleDelete(project.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {project.description}
-              </p>
-            </CardContent>
-          </Card>
+          <ProjectCard 
+            key={project.id}
+            project={project}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         ))}
 
         {/* Add New Project Card */}
         {!isAddMode && !editing && (
-          <Card
-            className="overflow-hidden border-dashed cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={handleAddNew}
-          >
-            <div className="aspect-video flex items-center justify-center bg-muted/50">
-              <div className="text-center p-6">
-                <Image className="h-10 w-10 mx-auto mb-2 text-muted-foreground" />
-                <h3 className="font-medium">Adicionar Novo Projeto</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Clique para adicionar um novo projeto ao portfólio
-                </p>
-              </div>
-            </div>
-          </Card>
+          <AddProjectCard onClick={handleAddNew} />
         )}
       </div>
     </div>
