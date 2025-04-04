@@ -18,6 +18,7 @@ export interface Project {
   featured?: boolean;
   altText?: string;
   keywords?: string[];
+  premiumImage?: string; // Added premiumImage field for Freepik images
 }
 
 interface ProjectCardProps {
@@ -29,6 +30,9 @@ interface ProjectCardProps {
 
 export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
   ({ project, className, featured = false, enableModalView = false }, ref) => {
+    // Use premium image if available, otherwise fallback to original
+    const displayImage = project.premiumImage || project.imageUrl;
+    
     return (
       <div 
         ref={ref}
@@ -40,7 +44,7 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
       >
         {/* Image */}
         <img
-          src={project.imageUrl}
+          src={displayImage}
           alt={project.altText || project.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -88,7 +92,7 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
                     </DialogTrigger>
                     <DialogContent className="max-w-5xl p-1 bg-transparent border-none">
                       <img 
-                        src={project.imageUrl} 
+                        src={displayImage} 
                         alt={project.altText || project.title} 
                         className="w-full h-auto" 
                       />

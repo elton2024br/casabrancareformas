@@ -4,41 +4,34 @@ import { type Project } from "@/components/ui/project-card";
 
 interface ProjectSeoProps {
   project: Project;
-  baseUrl?: string;
 }
 
-export function ProjectSeo({ project, baseUrl = window.location.origin }: ProjectSeoProps) {
-  const keywords = project.keywords 
-    ? project.keywords.join(", ") 
-    : `reforma ${project.category}, design de interiores, projeto personalizado, Casa Branca, reforma São Paulo`;
+export function ProjectSeo({ project }: ProjectSeoProps) {
+  const title = `${project.title} | Casa Branca Reformas`;
+  const description = project.description;
+  const keywords = project.keywords?.join(", ") || `${project.category}, reforma, design de interiores, casa branca`;
+  const ogImage = project.premiumImage || project.imageUrl;
   
-  // Enrich structured data for better SEO
-  const structuredData = {
+  // Create structured data for SEO
+  const structuredDataText = JSON.stringify({
     "@context": "https://schema.org",
-    "@type": "CreativeWork",
+    "@type": "Product",
     "name": project.title,
     "description": project.description,
-    "image": project.imageUrl,
-    "author": {
-      "@type": "Organization",
-      "name": "Casa Branca Reformas e Design de Interiores"
-    },
-    "datePublished": "2023-03-01",
-    "creator": {
-      "@type": "Organization",
-      "name": "Casa Branca Reformas e Design de Interiores",
-      "url": baseUrl
-    },
-    "keywords": keywords
-  };
-  
+    "image": project.premiumImage || project.imageUrl,
+    "category": project.category,
+    "brand": {
+      "@type": "Brand",
+      "name": "Casa Branca Reformas"
+    }
+  });
+
   return (
-    <SeoMeta 
-      title={`${project.title} | Casa Branca Reformas e Design de Interiores`}
-      description={project.description}
+    <SeoMeta
+      title={title}
+      description={description}
       keywords={keywords}
-      ogImage={project.imageUrl}
-      structuredData={JSON.stringify(structuredData)}
+      ogImage={ogImage}
     />
   );
 }

@@ -10,6 +10,7 @@ import { PortfolioGrid } from "@/components/portfolio/PortfolioGrid";
 import { PortfolioCTA } from "@/components/portfolio/PortfolioCTA";
 import { PortfolioSchemaData } from "@/components/portfolio/PortfolioSchemaData";
 import { usePortfolioAnimation } from "@/components/portfolio/usePortfolioAnimation";
+import { getFreepikImageByCategory } from "@/services/freepikService";
 
 // Mock data for portfolio projects with improved SEO content
 const portfolioProjects: Project[] = [
@@ -75,17 +76,49 @@ const categories = ["Todos", ...Array.from(new Set(portfolioProjects.map(project
 const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [filteredProjects, setFilteredProjects] = useState(portfolioProjects);
+  const [projectsWithPremiumImages, setProjectsWithPremiumImages] = useState<Project[]>(portfolioProjects);
   const { addToRefs } = usePortfolioAnimation(filteredProjects);
 
+  // Fetch premium images from Freepik when the component mounts
+  useEffect(() => {
+    const fetchPremiumImages = async () => {
+      const updatedProjects = await Promise.all(
+        portfolioProjects.map(async (project) => {
+          try {
+            const premiumImage = await getFreepikImageByCategory(project.category);
+            return { ...project, premiumImage: premiumImage || project.imageUrl };
+          } catch (error) {
+            console.error('Error fetching premium image:', error);
+            return project;
+          }
+        })
+      );
+      
+      setProjectsWithPremiumImages(updatedProjects);
+      
+      // Also update filtered projects if category is "Todos"
+      if (selectedCategory === "Todos") {
+        setFilteredProjects(updatedProjects);
+      } else {
+        setFilteredProjects(
+          updatedProjects.filter((project) => project.category === selectedCategory)
+        );
+      }
+    };
+
+    fetchPremiumImages();
+  }, []);
+
+  // Filter projects when category changes
   useEffect(() => {
     if (selectedCategory === "Todos") {
-      setFilteredProjects(portfolioProjects);
+      setFilteredProjects(projectsWithPremiumImages);
     } else {
       setFilteredProjects(
-        portfolioProjects.filter((project) => project.category === selectedCategory)
+        projectsWithPremiumImages.filter((project) => project.category === selectedCategory)
       );
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, projectsWithPremiumImages]);
 
   return (
     <>

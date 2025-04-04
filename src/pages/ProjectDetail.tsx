@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { type Project } from "@/components/ui/project-card";
+import { getFreepikImageByCategory } from "@/services/freepikService";
 
 // Import the new components
 import { ProjectBreadcrumb } from "@/components/portfolio/ProjectBreadcrumb";
@@ -62,26 +63,66 @@ const portfolioProjects: Project[] = [
   },
 ];
 
-// Mock data for project details
-const projectImages = [
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1170&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1600607687644-a59deb058d98?q=80&w=1170&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1600566753376-12c8ab8e438f?q=80&w=1170&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=1170&auto=format&fit=crop"
-];
-
+// Mock data for project details with premium images
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
   const [prevProject, setPrevProject] = useState<Project | null>(null);
   const [nextProject, setNextProject] = useState<Project | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>("");
+  const [projectImages, setProjectImages] = useState<string[]>([]);
 
   useEffect(() => {
     // Find the current project
     const currentIndex = portfolioProjects.findIndex(project => project.id === id);
+    
     if (currentIndex !== -1) {
-      setProject(portfolioProjects[currentIndex]);
+      const currentProject = portfolioProjects[currentIndex];
+      
+      // Fetch premium image for the current project
+      const fetchPremiumImage = async () => {
+        try {
+          const premiumImage = await getFreepikImageByCategory(currentProject.category);
+          
+          if (premiumImage) {
+            // Set the project with premium image
+            setProject({ 
+              ...currentProject, 
+              premiumImage 
+            });
+            
+            // Fetch more premium images for the gallery
+            const moreImages = await Promise.all([
+              getFreepikImageByCategory(currentProject.category),
+              getFreepikImageByCategory(currentProject.category),
+              getFreepikImageByCategory(currentProject.category)
+            ]);
+            
+            // Filter out any empty image URLs
+            const validImages = [premiumImage, ...moreImages.filter(img => img)];
+            setProjectImages(validImages);
+          } else {
+            setProject(currentProject);
+            setProjectImages([
+              currentProject.imageUrl,
+              "https://images.unsplash.com/photo-1600607687644-a59deb058d98?q=80&w=1170&auto=format&fit=crop",
+              "https://images.unsplash.com/photo-1600566753376-12c8ab8e438f?q=80&w=1170&auto=format&fit=crop",
+              "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=1170&auto=format&fit=crop"
+            ]);
+          }
+        } catch (error) {
+          console.error('Error fetching premium images:', error);
+          setProject(currentProject);
+          setProjectImages([
+            currentProject.imageUrl,
+            "https://images.unsplash.com/photo-1600607687644-a59deb058d98?q=80&w=1170&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1600566753376-12c8ab8e438f?q=80&w=1170&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=1170&auto=format&fit=crop"
+          ]);
+        }
+      };
+      
+      fetchPremiumImage();
       
       // Find previous project
       const prevIndex = currentIndex > 0 ? currentIndex - 1 : portfolioProjects.length - 1;
@@ -97,6 +138,9 @@ const ProjectDetail = () => {
     return <NotFoundProject />;
   }
 
+  // Use premium image if available, otherwise fallback to original
+  const displayImage = project.premiumImage || project.imageUrl;
+
   return (
     <>
       <ProjectSeo project={project} />
@@ -111,12 +155,13 @@ const ProjectDetail = () => {
             description={project.description} 
           />
           <ProjectMainImage 
-            imageUrl={project.imageUrl} 
+            imageUrl={displayImage} 
             title={project.title}
             altText={project.altText}
             onImageSelect={setSelectedImage}
+            galleryImages={projectImages.slice(1)}
           />
-          <ProjectGallery images={projectImages} />
+          <ProjectGallery images={projectImages} title={project.title} />
           <ProjectDescription />
           <RelatedProjects 
             projects={portfolioProjects} 

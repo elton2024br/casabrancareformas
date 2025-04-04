@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Edit, Trash2, Plus, Image } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { type Project } from "@/components/ui/project-card";
+import { FreepikImageSelector } from "@/components/admin/FreepikImageSelector";
 
 // Mock data for portfolio projects
 const initialProjects: Project[] = [
@@ -74,6 +75,10 @@ const AdminPortfolio = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageSelect = (imageUrl: string) => {
+    setFormData((prev) => ({ ...prev, imageUrl }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -154,17 +159,14 @@ const AdminPortfolio = () => {
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="imageUrl">URL da Imagem</Label>
-                <Input
-                  id="imageUrl"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleChange}
-                  placeholder="https://exemplo.com/imagem.jpg"
-                  required
-                />
-              </div>
+              
+              {/* Replaced the URL input with our FreepikImageSelector */}
+              <FreepikImageSelector
+                onSelectImage={handleImageSelect}
+                initialQuery={formData.category}
+                selectedImage={formData.imageUrl}
+              />
+              
               <div className="flex justify-end space-x-4">
                 <Button type="button" variant="outline" onClick={handleCancel}>
                   Cancelar
