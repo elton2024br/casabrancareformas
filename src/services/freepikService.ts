@@ -61,17 +61,17 @@ export const searchFreepikImages = async (query: string, page = 1, limit = 20): 
 
 export const getFreepikImageByCategory = async (category: string): Promise<string> => {
   try {
-    // Map categories to relevant search terms for better results
+    // Enhanced mapping for categories to get more relevant premium images
     const searchTerms: Record<string, string> = {
-      'Apartamento': 'modern apartment interior',
-      'Cozinha': 'modern kitchen design',
-      'Comercial': 'commercial office space',
-      'Banheiro': 'luxury bathroom interior',
-      'Sala': 'contemporary living room',
-      'Todos': 'interior design'
+      'Apartamento': 'modern luxury apartment interior design',
+      'Cozinha': 'luxury modern kitchen design interior',
+      'Comercial': 'elegant commercial office space interior',
+      'Banheiro': 'luxury bathroom interior design marble',
+      'Sala': 'contemporary luxury living room interior',
+      'Todos': 'luxury interior design home'
     };
 
-    const searchTerm = searchTerms[category] || category;
+    const searchTerm = searchTerms[category] || `${category} interior design premium`;
     const response = await searchFreepikImages(searchTerm, 1, 5);
     
     if (response.data && response.data.length > 0) {
@@ -83,5 +83,32 @@ export const getFreepikImageByCategory = async (category: string): Promise<strin
   } catch (error) {
     console.error('Error getting Freepik image by category:', error);
     return '';
+  }
+};
+
+// Function to get multiple premium images for a category
+export const getMultipleFreepikImagesByCategory = async (category: string, count = 4): Promise<string[]> => {
+  try {
+    const searchTerms: Record<string, string> = {
+      'Apartamento': 'modern luxury apartment interior design',
+      'Cozinha': 'luxury modern kitchen design interior',
+      'Comercial': 'elegant commercial office space interior',
+      'Banheiro': 'luxury bathroom interior design marble',
+      'Sala': 'contemporary luxury living room interior',
+      'Todos': 'luxury interior design home'
+    };
+
+    const searchTerm = searchTerms[category] || `${category} interior design premium`;
+    const response = await searchFreepikImages(searchTerm, 1, count + 2); // Fetch a few extra in case some fail
+    
+    if (response.data && response.data.length > 0) {
+      // Return up to 'count' preview URLs
+      return response.data.slice(0, count).map(img => img.preview.url);
+    }
+    
+    return [];
+  } catch (error) {
+    console.error('Error getting multiple Freepik images by category:', error);
+    return [];
   }
 };

@@ -11,6 +11,7 @@ import { PortfolioCTA } from "@/components/portfolio/PortfolioCTA";
 import { PortfolioSchemaData } from "@/components/portfolio/PortfolioSchemaData";
 import { usePortfolioAnimation } from "@/components/portfolio/usePortfolioAnimation";
 import { getFreepikImageByCategory } from "@/services/freepikService";
+import { toast } from "sonner";
 
 // Mock data for portfolio projects with improved SEO content
 const portfolioProjects: Project[] = [
@@ -78,31 +79,42 @@ const Portfolio = () => {
   const [filteredProjects, setFilteredProjects] = useState(portfolioProjects);
   const [projectsWithPremiumImages, setProjectsWithPremiumImages] = useState<Project[]>(portfolioProjects);
   const { addToRefs } = usePortfolioAnimation(filteredProjects);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch premium images from Freepik when the component mounts
   useEffect(() => {
     const fetchPremiumImages = async () => {
-      const updatedProjects = await Promise.all(
-        portfolioProjects.map(async (project) => {
-          try {
-            const premiumImage = await getFreepikImageByCategory(project.category);
-            return { ...project, premiumImage: premiumImage || project.imageUrl };
-          } catch (error) {
-            console.error('Error fetching premium image:', error);
-            return project;
-          }
-        })
-      );
-      
-      setProjectsWithPremiumImages(updatedProjects);
-      
-      // Also update filtered projects if category is "Todos"
-      if (selectedCategory === "Todos") {
-        setFilteredProjects(updatedProjects);
-      } else {
-        setFilteredProjects(
-          updatedProjects.filter((project) => project.category === selectedCategory)
+      setIsLoading(true);
+      try {
+        const updatedProjects = await Promise.all(
+          portfolioProjects.map(async (project) => {
+            try {
+              const premiumImage = await getFreepikImageByCategory(project.category);
+              return { ...project, premiumImage: premiumImage || project.imageUrl };
+            } catch (error) {
+              console.error('Error fetching premium image:', error);
+              return project;
+            }
+          })
         );
+        
+        setProjectsWithPremiumImages(updatedProjects);
+        
+        // Also update filtered projects if category is "Todos"
+        if (selectedCategory === "Todos") {
+          setFilteredProjects(updatedProjects);
+        } else {
+          setFilteredProjects(
+            updatedProjects.filter((project) => project.category === selectedCategory)
+          );
+        }
+        
+        toast.success("Imagens premium carregadas com sucesso!");
+      } catch (error) {
+        console.error('Error fetching premium images:', error);
+        toast.error("Erro ao carregar imagens premium. Usando imagens padrão.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -147,10 +159,16 @@ const Portfolio = () => {
       {/* Projects Grid */}
       <section className="py-16 md:py-24">
         <div className="container px-4 md:px-6 mx-auto">
-          <PortfolioGrid 
-            projects={filteredProjects} 
-            addToRefs={addToRefs}
-          />
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <PortfolioGrid 
+              projects={filteredProjects} 
+              addToRefs={addToRefs}
+            />
+          )}
           
           <PortfolioSchemaData />
         </div>

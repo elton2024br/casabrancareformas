@@ -4,9 +4,9 @@ import { useParams } from "react-router-dom";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { type Project } from "@/components/ui/project-card";
-import { getFreepikImageByCategory } from "@/services/freepikService";
+import { getFreepikImageByCategory, getMultipleFreepikImagesByCategory } from "@/services/freepikService";
 
-// Import the new components
+// Import the components
 import { ProjectBreadcrumb } from "@/components/portfolio/ProjectBreadcrumb";
 import { ProjectHeader } from "@/components/portfolio/ProjectHeader";
 import { ProjectMainImage } from "@/components/portfolio/ProjectMainImage";
@@ -16,6 +16,7 @@ import { RelatedProjects } from "@/components/portfolio/RelatedProjects";
 import { ProjectNavigation } from "@/components/portfolio/ProjectNavigation";
 import { ProjectSeo } from "@/components/portfolio/ProjectSeo";
 import { NotFoundProject } from "@/components/portfolio/NotFoundProject";
+import { toast } from "sonner";
 
 // Mock data for portfolio projects
 const portfolioProjects: Project[] = [
@@ -63,7 +64,6 @@ const portfolioProjects: Project[] = [
   },
 ];
 
-// Mock data for project details with premium images
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [project, setProject] = useState<Project | null>(null);
@@ -71,36 +71,37 @@ const ProjectDetail = () => {
   const [nextProject, setNextProject] = useState<Project | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [projectImages, setProjectImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     // Find the current project
     const currentIndex = portfolioProjects.findIndex(project => project.id === id);
+    setLoading(true);
     
     if (currentIndex !== -1) {
       const currentProject = portfolioProjects[currentIndex];
       
-      // Fetch premium image for the current project
-      const fetchPremiumImage = async () => {
+      // Fetch premium images for the current project
+      const fetchPremiumImages = async () => {
         try {
+          // Get the main premium image
           const premiumImage = await getFreepikImageByCategory(currentProject.category);
           
+          // Update the project with the premium image
           if (premiumImage) {
-            // Set the project with premium image
             setProject({ 
               ...currentProject, 
               premiumImage 
             });
             
-            // Fetch more premium images for the gallery
-            const moreImages = await Promise.all([
-              getFreepikImageByCategory(currentProject.category),
-              getFreepikImageByCategory(currentProject.category),
-              getFreepikImageByCategory(currentProject.category)
-            ]);
+            // Fetch additional premium images for the gallery
+            const galleryImages = await getMultipleFreepikImagesByCategory(currentProject.category, 4);
             
-            // Filter out any empty image URLs
-            const validImages = [premiumImage, ...moreImages.filter(img => img)];
-            setProjectImages(validImages);
+            // Combine main image with gallery images, filter out empty strings
+            const allImages = [premiumImage, ...galleryImages].filter(img => img);
+            setProjectImages(allImages);
+            
+            toast.success("Imagens premium carregadas com sucesso!");
           } else {
             setProject(currentProject);
             setProjectImages([
@@ -112,6 +113,7 @@ const ProjectDetail = () => {
           }
         } catch (error) {
           console.error('Error fetching premium images:', error);
+          toast.error("Erro ao carregar imagens premium. Usando imagens padrão.");
           setProject(currentProject);
           setProjectImages([
             currentProject.imageUrl,
@@ -119,10 +121,12 @@ const ProjectDetail = () => {
             "https://images.unsplash.com/photo-1600566753376-12c8ab8e438f?q=80&w=1170&auto=format&fit=crop",
             "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=1170&auto=format&fit=crop"
           ]);
+        } finally {
+          setLoading(false);
         }
       };
       
-      fetchPremiumImage();
+      fetchPremiumImages();
       
       // Find previous project
       const prevIndex = currentIndex > 0 ? currentIndex - 1 : portfolioProjects.length - 1;
@@ -131,8 +135,26 @@ const ProjectDetail = () => {
       // Find next project
       const nextIndex = currentIndex < portfolioProjects.length - 1 ? currentIndex + 1 : 0;
       setNextProject(portfolioProjects[nextIndex]);
+    } else {
+      setLoading(false);
     }
   }, [id]);
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <main className="pt-24 pb-16">
+          <div className="container px-4 md:px-6 mx-auto">
+            <div className="flex items-center justify-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   if (!project) {
     return <NotFoundProject />;

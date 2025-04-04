@@ -4,6 +4,8 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ProjectCard, type Project } from "@/components/ui/project-card";
+import { useEffect, useState } from "react";
+import { getFreepikImageByCategory } from "@/services/freepikService";
 
 // Mock data for featured projects with improved descriptions and SEO-friendly content
 const featuredProjects: Project[] = [
@@ -39,6 +41,36 @@ interface ProjectsSectionProps {
 }
 
 export function ProjectsSection({ addToRefs }: ProjectsSectionProps) {
+  const [projects, setProjects] = useState<Project[]>(featuredProjects);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPremiumImages = async () => {
+      setIsLoading(true);
+      try {
+        const updatedProjects = await Promise.all(
+          featuredProjects.map(async (project) => {
+            try {
+              const premiumImage = await getFreepikImageByCategory(project.category);
+              return premiumImage ? { ...project, premiumImage } : project;
+            } catch (error) {
+              console.error('Error fetching premium image:', error);
+              return project;
+            }
+          })
+        );
+        
+        setProjects(updatedProjects);
+      } catch (error) {
+        console.error('Error updating projects with premium images:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchPremiumImages();
+  }, []);
+
   return (
     <section className="py-16 md:py-32" id="projetos-destaque">
       <div className="container px-4 md:px-6 mx-auto">
@@ -58,32 +90,43 @@ export function ProjectsSection({ addToRefs }: ProjectsSectionProps) {
           </div>
         </div>
         
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {featuredProjects.map((project, index) => (
-            <div key={project.id} ref={(el) => addToRefs(el, 9 + index)}>
-              <ProjectCard
-                project={project}
-                featured={index === 0}
-                enableModalView={true}
-                className={index === 0 ? "md:col-span-2" : ""}
-              />
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(3)].map((_, index) => (
+              <div 
+                key={index} 
+                className={`animate-pulse bg-gray-200 rounded-lg ${index === 0 ? "md:col-span-2 aspect-[16/10]" : "aspect-square"}`}
+              ></div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {projects.map((project, index) => (
+              <div key={project.id} ref={(el) => addToRefs(el, 9 + index)}>
+                <ProjectCard
+                  project={project}
+                  featured={index === 0}
+                  enableModalView={true}
+                  className={index === 0 ? "md:col-span-2" : ""}
+                />
+              </div>
+            ))}
+          </div>
+        )}
         
         {/* Schema.org structured data for projects */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ItemList",
-            "itemListElement": featuredProjects.map((project, index) => ({
+            "itemListElement": projects.map((project, index) => ({
               "@type": "ListItem",
               "position": index + 1,
               "item": {
                 "@type": "CreativeWork",
                 "name": project.title,
                 "description": project.description,
-                "image": project.imageUrl
+                "image": project.premiumImage || project.imageUrl
               }
             }))
           })}

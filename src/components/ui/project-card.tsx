@@ -47,6 +47,7 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
           src={displayImage}
           alt={project.altText || project.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
         />
         
         {/* Overlay */}

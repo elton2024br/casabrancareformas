@@ -13,7 +13,7 @@ export function ProjectSeo({ project }: ProjectSeoProps) {
   const ogImage = project.premiumImage || project.imageUrl;
   
   // Create structured data for SEO
-  const structuredDataText = JSON.stringify({
+  const structuredData = {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": project.title,
@@ -24,14 +24,20 @@ export function ProjectSeo({ project }: ProjectSeoProps) {
       "@type": "Brand",
       "name": "Casa Branca Reformas"
     }
-  });
+  };
 
   return (
-    <SeoMeta
-      title={title}
-      description={description}
-      keywords={keywords}
-      ogImage={ogImage}
-    />
+    <>
+      <SeoMeta
+        title={title}
+        description={description}
+        keywords={keywords}
+        ogImage={ogImage}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+    </>
   );
 }
