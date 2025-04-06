@@ -41,12 +41,6 @@ export function VideoUploader({
       const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `videos/${fileName}`;
       
-      // Criamos uma função para monitorar o progresso
-      const progressHandler = (progress: { loaded: number; total: number }) => {
-        const percent = Math.round((progress.loaded / progress.total) * 100);
-        setProgress(percent);
-      };
-      
       // Upload para o Supabase Storage
       const { error: uploadError, data } = await supabase.storage
         .from('portfolio')
@@ -64,6 +58,8 @@ export function VideoUploader({
         .from('portfolio')
         .getPublicUrl(filePath);
       
+      console.log("Vídeo enviado com sucesso. URL:", publicUrl);
+      
       // Atualizar URL do vídeo
       onVideoSelect(publicUrl);
       toast.success("Vídeo enviado com sucesso!");
@@ -74,6 +70,24 @@ export function VideoUploader({
       setIsUploading(false);
     }
   }, [onVideoSelect, setIsUploading]);
+  
+  // Atualiza o progresso a cada segundo durante o upload
+  const updateProgress = useCallback(() => {
+    if (isUploading && progress < 95) {
+      setProgress(prev => Math.min(prev + Math.random() * 5, 95));
+    }
+  }, [isUploading, progress]);
+  
+  // Simula progresso enquanto o upload ocorre
+  useState(() => {
+    let interval: number | undefined;
+    if (isUploading) {
+      interval = setInterval(updateProgress, 200) as unknown as number;
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  });
   
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

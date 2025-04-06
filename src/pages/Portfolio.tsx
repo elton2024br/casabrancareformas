@@ -12,9 +12,10 @@ import { PortfolioSchemaData } from "@/components/portfolio/PortfolioSchemaData"
 import { usePortfolioAnimation } from "@/components/portfolio/usePortfolioAnimation";
 import { getFreepikImageByCategory } from "@/services/freepikService";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
-// Mock data for portfolio projects with improved SEO content
-const portfolioProjects: Project[] = [
+// Mock data para ser usado como fallback caso não haja dados no Supabase
+const fallbackProjects: Project[] = [
   {
     id: "1",
     title: "Residência Moderna em São Paulo",
@@ -71,66 +72,79 @@ const portfolioProjects: Project[] = [
   },
 ];
 
-// Categories for filter
-const categories = ["Todos", ...Array.from(new Set(portfolioProjects.map(project => project.category)))];
-
 const Portfolio = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [filteredProjects, setFilteredProjects] = useState(portfolioProjects);
-  const [projectsWithPremiumImages, setProjectsWithPremiumImages] = useState<Project[]>(portfolioProjects);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<string[]>(["Todos"]);
   const { addToRefs } = usePortfolioAnimation(filteredProjects);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch premium images from Freepik when the component mounts
+  // Buscar projetos do Supabase
   useEffect(() => {
-    const fetchPremiumImages = async () => {
+    const fetchProjects = async () => {
       setIsLoading(true);
       try {
-        const updatedProjects = await Promise.all(
-          portfolioProjects.map(async (project) => {
-            try {
-              const premiumImage = await getFreepikImageByCategory(project.category);
-              return { ...project, premiumImage: premiumImage || project.imageUrl };
-            } catch (error) {
-              console.error('Error fetching premium image:', error);
-              return project;
-            }
-          })
-        );
+        // Tentar obter projetos do Supabase (implemente isso quando tiver um banco de dados)
+        // Aqui estamos usando projetos fictícios por enquanto
+        console.log("Buscando projetos do banco de dados...");
         
-        setProjectsWithPremiumImages(updatedProjects);
+        // Em uma implementação real, você buscaria os projetos do Supabase
+        // Exemplo:
+        /*
+        const { data, error } = await supabase
+          .from('projects')
+          .select('*');
+          
+        if (error) throw error;
+        if (data) setAllProjects(data);
+        */
         
-        // Also update filtered projects if category is "Todos"
-        if (selectedCategory === "Todos") {
-          setFilteredProjects(updatedProjects);
-        } else {
-          setFilteredProjects(
-            updatedProjects.filter((project) => project.category === selectedCategory)
+        // Por enquanto, usamos dados fictícios após um pequeno atraso para simular a busca
+        setTimeout(() => {
+          setAllProjects(fallbackProjects);
+          setIsLoading(false);
+          
+          // Extrair categorias únicas
+          const uniqueCategories = Array.from(
+            new Set(fallbackProjects.map(project => project.category))
           );
-        }
+          setCategories(["Todos", ...uniqueCategories]);
+          
+          // Filtrar projetos com base na categoria selecionada
+          if (selectedCategory === "Todos") {
+            setFilteredProjects(fallbackProjects);
+          } else {
+            setFilteredProjects(
+              fallbackProjects.filter(project => project.category === selectedCategory)
+            );
+          }
+        }, 500);
         
-        toast.success("Imagens premium carregadas com sucesso!");
       } catch (error) {
-        console.error('Error fetching premium images:', error);
-        toast.error("Erro ao carregar imagens premium. Usando imagens padrão.");
-      } finally {
+        console.error("Erro ao buscar projetos:", error);
+        toast.error("Não foi possível carregar os projetos. Usando dados de exemplo.");
+        
+        // Usar dados fictícios em caso de erro
+        setAllProjects(fallbackProjects);
+        setFilteredProjects(fallbackProjects);
         setIsLoading(false);
       }
     };
 
-    fetchPremiumImages();
+    fetchProjects();
   }, []);
 
-  // Filter projects when category changes
+  // Filtrar projetos quando a categoria for alterada
   useEffect(() => {
     if (selectedCategory === "Todos") {
-      setFilteredProjects(projectsWithPremiumImages);
+      setFilteredProjects(allProjects);
     } else {
       setFilteredProjects(
-        projectsWithPremiumImages.filter((project) => project.category === selectedCategory)
+        allProjects.filter(project => project.category === selectedCategory)
       );
     }
-  }, [selectedCategory, projectsWithPremiumImages]);
+  }, [selectedCategory, allProjects]);
 
   return (
     <>
@@ -177,7 +191,7 @@ const Portfolio = () => {
       {/* CTA Section */}
       <PortfolioCTA 
         addToRefs={addToRefs}
-        refIndex={portfolioProjects.length + 2}
+        refIndex={allProjects.length + 2}
       />
       
       <Footer />

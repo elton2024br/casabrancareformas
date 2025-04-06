@@ -17,6 +17,8 @@ export function PortfolioGrid({ projects, addToRefs }: PortfolioGridProps) {
     );
   }
   
+  console.log("Projetos sendo renderizados:", projects);
+  
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {projects.map((project, index) => (

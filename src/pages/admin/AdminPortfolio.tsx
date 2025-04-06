@@ -42,11 +42,18 @@ const AdminPortfolio = () => {
     description: "",
     imageUrl: "",
     category: "",
+    isVideo: false, // Inicializa a propriedade isVideo
+    videoUrl: "", // Inicializa a propriedade videoUrl
   });
   const [isAddMode, setIsAddMode] = useState(false);
 
   const handleEdit = (project: Project) => {
-    setFormData(project);
+    // Garantir que o projeto editado tenha todas as propriedades necessárias
+    setFormData({
+      ...project,
+      isVideo: project.isVideo || false,
+      videoUrl: project.videoUrl || ""
+    });
     setEditing(project.id);
     setIsAddMode(false);
   };
@@ -63,12 +70,16 @@ const AdminPortfolio = () => {
       description: "",
       imageUrl: "",
       category: "",
+      isVideo: false,
+      videoUrl: ""
     });
     setIsAddMode(true);
     setEditing(null);
   };
 
   const handleSubmit = (updatedProject: Project) => {
+    console.log("Projeto a ser salvo:", updatedProject);
+    
     if (isAddMode) {
       setProjects([...projects, updatedProject]);
       toast.success("Projeto adicionado com sucesso!");

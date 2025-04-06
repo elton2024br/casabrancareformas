@@ -19,7 +19,7 @@ export interface Project {
   altText?: string;
   keywords?: string[];
   premiumImage?: string; // Added premiumImage field for Freepik images
-  videoUrl?: string; // Nova propriedade para URL de vídeos
+  videoUrl?: string; // URL do vídeo
   isVideo?: boolean; // Flag para indicar se é um projeto com vídeo destacado
 }
 
@@ -34,6 +34,8 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
   ({ project, className, featured = false, enableModalView = false }, ref) => {
     // Use premium image if available, otherwise fallback to original
     const displayImage = project.premiumImage || project.imageUrl;
+    
+    console.log("Renderizando projeto:", project.title, "isVideo:", project.isVideo, "videoUrl:", project.videoUrl);
     
     return (
       <div 
@@ -107,7 +109,7 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
                         className="text-white hover:text-primary rounded-full p-1 bg-black/30 flex items-center justify-center"
                         aria-label={project.isVideo ? "Assistir vídeo" : "Ampliar imagem"}
                       >
-                        {project.isVideo ? 
+                        {project.isVideo && project.videoUrl ? 
                           <Play className="h-4 w-4" /> : 
                           <Maximize className="h-4 w-4" />
                         }
