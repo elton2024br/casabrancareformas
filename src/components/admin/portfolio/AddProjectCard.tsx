@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { Image } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface AddProjectCardProps {
   onClick: () => void;
@@ -14,7 +14,9 @@ export function AddProjectCard({ onClick }: AddProjectCardProps) {
     >
       <div className="aspect-video flex items-center justify-center bg-muted/50">
         <div className="text-center p-6">
-          <Image className="h-10 w-10 mx-auto mb-2 text-muted-foreground" />
+          <div className="mx-auto mb-3 bg-primary/10 h-12 w-12 rounded-full flex items-center justify-center">
+            <Plus className="h-6 w-6 text-primary" />
+          </div>
           <h3 className="font-medium">Adicionar Novo Projeto</h3>
           <p className="text-sm text-muted-foreground mt-1">
             Clique para adicionar um novo projeto ao portfólio

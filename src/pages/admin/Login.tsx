@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "@/components/admin/LoginForm";
+import { Shield } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +18,10 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-secondary flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="text-center text-3xl font-bold tracking-tight">
+        <div className="flex justify-center">
+          <Shield className="h-12 w-12 text-primary" />
+        </div>
+        <h2 className="mt-4 text-center text-3xl font-bold tracking-tight">
           Área Administrativa
         </h2>
         <p className="mt-2 text-center text-sm text-muted-foreground">

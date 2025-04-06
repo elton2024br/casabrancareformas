@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { Lock, User } from "lucide-react"; 
 
-// Mock credentials - in a real app, these would be validated securely on a backend
-const MOCK_EMAIL = "admin@casabrancareformas.com";
-const MOCK_PASSWORD = "admin123";
+// Admin credentials - in a production app, these would be stored securely on a backend
+const ADMIN_EMAIL = "eltonsouza324@gmail.com";
+const ADMIN_PASSWORD = "38495573";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -27,19 +28,22 @@ const LoginForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate authentication
+    // Validate admin credentials
     setTimeout(() => {
       if (
-        formData.email === MOCK_EMAIL &&
-        formData.password === MOCK_PASSWORD
+        formData.email === ADMIN_EMAIL &&
+        formData.password === ADMIN_PASSWORD
       ) {
-        // Store auth status in localStorage (in a real app, use secure auth token)
+        // Store auth status in localStorage (in a real app, use more secure methods)
         localStorage.setItem("adminAuthenticated", "true");
+        localStorage.setItem("adminEmail", formData.email);
+        localStorage.setItem("adminLoginTime", Date.now().toString());
+        
         navigate("/admin/dashboard");
         toast.success("Login bem-sucedido!");
       } else {
         toast.error("Credenciais inválidas", {
-          description: "Verifique seu email e senha.",
+          description: "Apenas o administrador pode acessar esta área.",
         });
         setIsLoading(false);
       }
@@ -49,26 +53,27 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="flex items-center gap-2">
+          <User size={16} />
+          Email
+        </Label>
         <Input
           id="email"
           name="email"
           type="email"
           value={formData.email}
           onChange={handleChange}
-          placeholder="seu@email.com"
+          placeholder="email@exemplo.com"
           required
+          className="bg-background"
         />
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">Senha</Label>
-          <a
-            href="#"
-            className="text-sm font-medium text-primary hover:underline"
-          >
-            Esqueceu a senha?
-          </a>
+          <Label htmlFor="password" className="flex items-center gap-2">
+            <Lock size={16} />
+            Senha
+          </Label>
         </div>
         <Input
           id="password"
@@ -77,17 +82,17 @@ const LoginForm = () => {
           value={formData.password}
           onChange={handleChange}
           required
+          className="bg-background"
         />
       </div>
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? "Entrando..." : "Entrar"}
       </Button>
       
-      {/* Hint for demo purposes */}
-      <div className="rounded-md bg-muted p-3 text-sm text-muted-foreground">
-        <p className="font-medium">Credenciais de demonstração:</p>
-        <p>Email: admin@casabrancareformas.com</p>
-        <p>Senha: admin123</p>
+      <div className="mt-4 text-center">
+        <p className="text-sm text-muted-foreground">
+          Área restrita apenas para administradores
+        </p>
       </div>
     </form>
   );
