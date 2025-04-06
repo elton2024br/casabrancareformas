@@ -41,17 +41,18 @@ export function VideoUploader({
       const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `videos/${fileName}`;
       
+      // Criamos uma função para monitorar o progresso
+      const progressHandler = (progress: { loaded: number; total: number }) => {
+        const percent = Math.round((progress.loaded / progress.total) * 100);
+        setProgress(percent);
+      };
+      
       // Upload para o Supabase Storage
       const { error: uploadError, data } = await supabase.storage
         .from('portfolio')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false,
-          onUploadProgress: (progress) => {
-            // Atualizar progresso
-            const percent = Math.round((progress.loaded / progress.total) * 100);
-            setProgress(percent);
-          }
+          upsert: false
         });
       
       if (uploadError) {
