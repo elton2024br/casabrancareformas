@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,8 +9,9 @@ import { toast } from "sonner";
 import { FreepikImageSelector } from "@/components/admin/FreepikImageSelector";
 import { type Project } from "@/components/ui/project-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Image, Upload } from "lucide-react";
+import { Image, Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useDropzone } from "react-dropzone";
 
 interface ProjectFormProps {
   project: Project;
@@ -22,7 +23,8 @@ interface ProjectFormProps {
 export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectFormProps) {
   const [formData, setFormData] = useState<Project>(project);
   const [isUploading, setIsUploading] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("freepik");
+  const [activeTab, setActiveTab] = useState<string>("upload");
+  const [previewImage, setPreviewImage] = useState<string | null>(project.imageUrl || null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -33,35 +35,45 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
 
   const handleImageSelect = (imageUrl: string) => {
     setFormData((prev) => ({ ...prev, imageUrl }));
+    setPreviewImage(imageUrl);
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  const handleFileUpload = async (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
     if (!file) return;
 
-    // Verificar o tipo de arquivo
-    if (!file.type.startsWith('image/')) {
-      toast.error("Por favor, selecione apenas arquivos de imagem");
-      return;
-    }
-
-    // Verificar o tamanho do arquivo (limite de 5MB)
-    const fileSizeInMB = file.size / (1024 * 1024);
-    if (fileSizeInMB > 5) {
-      toast.error("A imagem deve ter no máximo 5MB");
-      return;
-    }
-
-    setIsUploading(true);
-
     try {
+      setIsUploading(true);
+
+      // Verificar o tipo de arquivo
+      if (!file.type.startsWith('image/')) {
+        toast.error("Por favor, selecione apenas arquivos de imagem");
+        return;
+      }
+
+      // Verificar o tamanho do arquivo (limite de 5MB)
+      const fileSizeInMB = file.size / (1024 * 1024);
+      if (fileSizeInMB > 5) {
+        toast.error("A imagem deve ter no máximo 5MB");
+        return;
+      }
+
       // Criar nome de arquivo único
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `project-images/${fileName}`;
 
+      // Criar um preview local da imagem
+      const objectUrl = URL.createObjectURL(file);
+      setPreviewImage(objectUrl);
+
       // Upload para o Supabase Storage
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError, data } = await supabase.storage
         .from('portfolio')
         .upload(filePath, file);
 
@@ -70,25 +82,48 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
       }
 
       // Obter URL pública
-      const { data } = supabase.storage
+      const { data: publicUrlData } = supabase.storage
         .from('portfolio')
         .getPublicUrl(filePath);
 
-      if (data) {
-        setFormData((prev) => ({ ...prev, imageUrl: data.publicUrl }));
+      if (publicUrlData) {
+        setFormData((prev) => ({ ...prev, imageUrl: publicUrlData.publicUrl }));
         toast.success("Imagem enviada com sucesso!");
       }
     } catch (error) {
       console.error("Erro ao fazer upload:", error);
       toast.error("Falha ao enviar a imagem. Tente novamente.");
+      // Resetar a preview em caso de erro
+      if (formData.imageUrl) {
+        setPreviewImage(formData.imageUrl);
+      } else {
+        setPreviewImage(null);
+      }
     } finally {
       setIsUploading(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
+  // Configuração do react-dropzone
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    handleFileUpload(acceptedFiles);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+    },
+    maxSize: 5 * 1024 * 1024, // 5MB
+    maxFiles: 1
+  });
+
+  const clearPreviewImage = () => {
+    if (previewImage && previewImage !== formData.imageUrl) {
+      URL.revokeObjectURL(previewImage);
+    }
+    setPreviewImage(null);
+    setFormData((prev) => ({ ...prev, imageUrl: "" }));
   };
 
   return (
@@ -147,39 +182,53 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
               
               <TabsContent value="upload" className="mt-4">
                 <div className="space-y-4">
-                  <div className="border-2 border-dashed border-primary/30 rounded-lg p-6 text-center">
-                    <Input
-                      type="file"
-                      id="imageUpload"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      disabled={isUploading}
-                    />
-                    <Label 
-                      htmlFor="imageUpload" 
-                      className="cursor-pointer flex flex-col items-center justify-center gap-2"
-                    >
-                      <Upload className="h-10 w-10 text-primary/60" />
-                      <span className="font-medium">
-                        {isUploading ? "Enviando..." : "Clique para escolher uma imagem"}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        Ou arraste e solte aqui (JPEG, PNG, WebP, máx 5MB)
-                      </span>
-                    </Label>
+                  <div 
+                    {...getRootProps()} 
+                    className={`border-2 border-dashed ${isDragActive ? 'border-primary' : 'border-primary/30'} rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-all`}
+                  >
+                    <input {...getInputProps()} />
+                    {isUploading ? (
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <span className="font-medium">Enviando...</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <Upload className="h-10 w-10 text-primary/60" />
+                        <span className="font-medium">
+                          {isDragActive 
+                            ? "Solte a imagem aqui" 
+                            : "Clique ou arraste uma imagem para este espaço"
+                          }
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          JPEG, PNG, WebP (máx. 5MB)
+                        </span>
+                      </div>
+                    )}
                   </div>
                   
-                  {formData.imageUrl && activeTab === "upload" && (
-                    <div className="mt-4 rounded-md overflow-hidden border">
-                      <img 
-                        src={formData.imageUrl} 
-                        alt="Preview da imagem selecionada" 
-                        className="w-full h-48 object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = "https://via.placeholder.com/400x300?text=Imagem+não+encontrada";
-                        }}
-                      />
+                  {previewImage && activeTab === "upload" && (
+                    <div className="mt-4 relative">
+                      <div className="rounded-md overflow-hidden border">
+                        <img 
+                          src={previewImage} 
+                          alt="Preview da imagem selecionada" 
+                          className="w-full h-48 object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = "https://via.placeholder.com/400x300?text=Imagem+não+encontrada";
+                          }}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={clearPreviewImage}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
                   )}
                 </div>
