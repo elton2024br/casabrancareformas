@@ -15,10 +15,22 @@ export interface ImageUploaderProps {
   isUploading: boolean;
   setIsUploading: (value: boolean) => void;
   activeTab: string;
+  onVideoSelect?: (videoUrl: string) => void;
+  videoUrl?: string | null;
+  isVideo?: boolean;
+  setIsVideo?: (value: boolean) => void;
 }
 
 export interface FreepikTabProps {
   category: string;
   imageUrl: string;
   onImageSelect: (imageUrl: string) => void;
+}
+
+export interface VideoUploaderProps {
+  videoUrl: string | null;
+  onVideoSelect: (videoUrl: string) => void;
+  clearVideo: () => void;
+  isUploading: boolean;
+  setIsUploading: (value: boolean) => void;
 }

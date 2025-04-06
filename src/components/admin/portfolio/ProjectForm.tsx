@@ -6,16 +6,19 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Image } from "lucide-react";
+import { Upload, Image, Video } from "lucide-react";
 import { type Project } from "@/components/ui/project-card";
 import { type ProjectFormProps } from "./formTypes";
 import { ImageUploader } from "./ImageUploader";
 import { FreepikTab } from "./FreepikTab";
+import { VideoUploader } from "./VideoUploader";
+import { Switch } from "@/components/ui/switch";
 
 export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectFormProps) {
   const [formData, setFormData] = useState<Project>(project);
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("upload");
+  const [isVideo, setIsVideo] = useState<boolean>(project.isVideo || false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,13 +31,26 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
     setFormData((prev) => ({ ...prev, imageUrl }));
   };
 
+  const handleVideoSelect = (videoUrl: string) => {
+    setFormData((prev) => ({ ...prev, videoUrl }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    // Incluir o flag isVideo nos dados do projeto
+    onSubmit({ ...formData, isVideo });
   };
 
   const clearPreviewImage = () => {
     setFormData((prev) => ({ ...prev, imageUrl: "" }));
+  };
+
+  const clearVideo = () => {
+    setFormData((prev) => ({ ...prev, videoUrl: "" }));
+  };
+
+  const handleIsVideoChange = (checked: boolean) => {
+    setIsVideo(checked);
   };
 
   return (
@@ -78,39 +94,61 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
             />
           </div>
           
-          <div className="space-y-2">
-            <Label>Imagem do Projeto</Label>
-            
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full grid grid-cols-2">
-                <TabsTrigger value="upload" className="flex items-center gap-2">
-                  <Upload size={16} /> Upload Local
-                </TabsTrigger>
-                <TabsTrigger value="freepik" className="flex items-center gap-2">
-                  <Image size={16} /> Freepik
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="upload" className="mt-4">
-                <ImageUploader 
-                  imageUrl={formData.imageUrl}
-                  onImageSelect={handleImageSelect}
-                  clearImage={clearPreviewImage}
-                  isUploading={isUploading}
-                  setIsUploading={setIsUploading}
-                  activeTab={activeTab}
-                />
-              </TabsContent>
-              
-              <TabsContent value="freepik" className="mt-4">
-                <FreepikTab 
-                  category={formData.category}
-                  imageUrl={formData.imageUrl}
-                  onImageSelect={handleImageSelect}
-                />
-              </TabsContent>
-            </Tabs>
+          <div className="flex items-center space-x-2">
+            <Switch 
+              id="isVideo" 
+              checked={isVideo} 
+              onCheckedChange={handleIsVideoChange} 
+            />
+            <Label htmlFor="isVideo">Este projeto possui vídeo</Label>
           </div>
+          
+          {isVideo ? (
+            <div className="space-y-2">
+              <Label>Vídeo do Projeto</Label>
+              <VideoUploader 
+                videoUrl={formData.videoUrl || null}
+                onVideoSelect={handleVideoSelect}
+                clearVideo={clearVideo}
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
+              />
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label>Imagem do Projeto</Label>
+              
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="w-full grid grid-cols-2">
+                  <TabsTrigger value="upload" className="flex items-center gap-2">
+                    <Upload size={16} /> Upload Local
+                  </TabsTrigger>
+                  <TabsTrigger value="freepik" className="flex items-center gap-2">
+                    <Image size={16} /> Freepik
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="upload" className="mt-4">
+                  <ImageUploader 
+                    imageUrl={formData.imageUrl}
+                    onImageSelect={handleImageSelect}
+                    clearImage={clearPreviewImage}
+                    isUploading={isUploading}
+                    setIsUploading={setIsUploading}
+                    activeTab={activeTab}
+                  />
+                </TabsContent>
+                
+                <TabsContent value="freepik" className="mt-4">
+                  <FreepikTab 
+                    category={formData.category}
+                    imageUrl={formData.imageUrl}
+                    onImageSelect={handleImageSelect}
+                  />
+                </TabsContent>
+              </Tabs>
+            </div>
+          )}
           
           <div className="flex justify-end space-x-4">
             <Button type="button" variant="outline" onClick={onCancel}>

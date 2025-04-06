@@ -61,8 +61,16 @@ const portfolioProjects: Project[] = [
     description: "Projeto comercial para café artesanal com atmosfera acolhedora e funcional.",
     imageUrl: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1170&auto=format&fit=crop",
     category: "Comercial",
+    videoUrl: "https://samplelib.com/lib/preview/mp4/sample-5s.mp4",
+    isVideo: true,
   },
 ];
+
+// Interface para os itens da galeria
+interface GalleryItem {
+  url: string;
+  isVideo: boolean;
+}
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -70,7 +78,7 @@ const ProjectDetail = () => {
   const [prevProject, setPrevProject] = useState<Project | null>(null);
   const [nextProject, setNextProject] = useState<Project | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>("");
-  const [projectImages, setProjectImages] = useState<string[]>([]);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -84,43 +92,83 @@ const ProjectDetail = () => {
       // Fetch premium images for the current project
       const fetchPremiumImages = async () => {
         try {
-          // Get the main premium image
-          const premiumImage = await getFreepikImageByCategory(currentProject.category);
-          
-          // Update the project with the premium image
-          if (premiumImage) {
-            setProject({ 
-              ...currentProject, 
-              premiumImage 
+          // For video projects
+          if (currentProject.isVideo && currentProject.videoUrl) {
+            setProject(currentProject);
+            
+            // Criar a galeria com o vídeo principal e algumas imagens
+            const galleryImages = await getMultipleFreepikImagesByCategory(currentProject.category, 3);
+            
+            // Montar os itens da galeria
+            const items: GalleryItem[] = [
+              { url: currentProject.videoUrl, isVideo: true }
+            ];
+            
+            // Adicionar as imagens
+            galleryImages.forEach(img => {
+              if (img) {
+                items.push({ url: img, isVideo: false });
+              }
             });
             
-            // Fetch additional premium images for the gallery
-            const galleryImages = await getMultipleFreepikImagesByCategory(currentProject.category, 4);
-            
-            // Combine main image with gallery images, filter out empty strings
-            const allImages = [premiumImage, ...galleryImages].filter(img => img);
-            setProjectImages(allImages);
-            
-            toast.success("Imagens premium carregadas com sucesso!");
+            setGalleryItems(items);
+            toast.success("Projeto de vídeo carregado com sucesso!");
           } else {
-            setProject(currentProject);
-            setProjectImages([
-              currentProject.imageUrl,
-              "https://images.unsplash.com/photo-1600607687644-a59deb058d98?q=80&w=1170&auto=format&fit=crop",
-              "https://images.unsplash.com/photo-1600566753376-12c8ab8e438f?q=80&w=1170&auto=format&fit=crop",
-              "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=1170&auto=format&fit=crop"
-            ]);
+            // Get the main premium image for non-video projects
+            const premiumImage = await getFreepikImageByCategory(currentProject.category);
+            
+            // Update the project with the premium image
+            if (premiumImage) {
+              setProject({ 
+                ...currentProject, 
+                premiumImage 
+              });
+              
+              // Fetch additional premium images for the gallery
+              const galleryImages = await getMultipleFreepikImagesByCategory(currentProject.category, 4);
+              
+              // Combine main image with gallery images, filter out empty strings
+              const allImages = [premiumImage, ...galleryImages].filter(img => img);
+              
+              // Convert to gallery items format
+              const items: GalleryItem[] = allImages.map(url => ({
+                url,
+                isVideo: false
+              }));
+              
+              setGalleryItems(items);
+              toast.success("Imagens premium carregadas com sucesso!");
+            } else {
+              setProject(currentProject);
+              
+              // Use default images
+              const defaultItems: GalleryItem[] = [
+                { url: currentProject.imageUrl, isVideo: false },
+                { url: "https://images.unsplash.com/photo-1600607687644-a59deb058d98?q=80&w=1170&auto=format&fit=crop", isVideo: false },
+                { url: "https://images.unsplash.com/photo-1600566753376-12c8ab8e438f?q=80&w=1170&auto=format&fit=crop", isVideo: false },
+                { url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=1170&auto=format&fit=crop", isVideo: false }
+              ];
+              
+              setGalleryItems(defaultItems);
+            }
           }
         } catch (error) {
           console.error('Error fetching premium images:', error);
-          toast.error("Erro ao carregar imagens premium. Usando imagens padrão.");
+          toast.error("Erro ao carregar mídias. Usando imagens padrão.");
           setProject(currentProject);
-          setProjectImages([
-            currentProject.imageUrl,
-            "https://images.unsplash.com/photo-1600607687644-a59deb058d98?q=80&w=1170&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1600566753376-12c8ab8e438f?q=80&w=1170&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=1170&auto=format&fit=crop"
-          ]);
+          
+          // Default gallery items if there's an error
+          const defaultItems: GalleryItem[] = currentProject.isVideo && currentProject.videoUrl 
+            ? [{ url: currentProject.videoUrl, isVideo: true }]
+            : [{ url: currentProject.imageUrl, isVideo: false }];
+            
+          // Add some default images
+          defaultItems.push(
+            { url: "https://images.unsplash.com/photo-1600607687644-a59deb058d98?q=80&w=1170&auto=format&fit=crop", isVideo: false },
+            { url: "https://images.unsplash.com/photo-1600566753376-12c8ab8e438f?q=80&w=1170&auto=format&fit=crop", isVideo: false }
+          );
+          
+          setGalleryItems(defaultItems);
         } finally {
           setLoading(false);
         }
@@ -176,14 +224,27 @@ const ProjectDetail = () => {
             category={project.category} 
             description={project.description} 
           />
-          <ProjectMainImage 
-            imageUrl={displayImage} 
-            title={project.title}
-            altText={project.altText}
-            onImageSelect={setSelectedImage}
-            galleryImages={projectImages.slice(1)}
-          />
-          <ProjectGallery images={projectImages} title={project.title} />
+          
+          {project.isVideo && project.videoUrl ? (
+            <div className="mb-12 aspect-video rounded-lg overflow-hidden shadow-lg">
+              <video 
+                src={project.videoUrl}
+                poster={displayImage}
+                controls
+                className="w-full h-full"
+              />
+            </div>
+          ) : (
+            <ProjectMainImage 
+              imageUrl={displayImage} 
+              title={project.title}
+              altText={project.altText}
+              onImageSelect={setSelectedImage}
+              galleryImages={galleryItems.slice(1).map(item => item.url)}
+            />
+          )}
+          
+          <ProjectGallery items={galleryItems} title={project.title} />
           <ProjectDescription />
           <RelatedProjects 
             projects={portfolioProjects} 

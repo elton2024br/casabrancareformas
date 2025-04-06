@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { forwardRef } from "react";
-import { Maximize } from "lucide-react";
+import { Maximize, Play } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,8 @@ export interface Project {
   altText?: string;
   keywords?: string[];
   premiumImage?: string; // Added premiumImage field for Freepik images
+  videoUrl?: string; // Nova propriedade para URL de vídeos
+  isVideo?: boolean; // Flag para indicar se é um projeto com vídeo destacado
 }
 
 interface ProjectCardProps {
@@ -42,13 +44,30 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
           className
         )}
       >
-        {/* Image */}
-        <img
-          src={displayImage}
-          alt={project.altText || project.title}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
+        {project.isVideo && project.videoUrl ? (
+          // Renderização de vídeo
+          <div className="h-full w-full relative">
+            <video
+              src={project.videoUrl}
+              poster={displayImage}
+              className="h-full w-full object-cover"
+              preload="metadata"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-primary/80 rounded-full p-4">
+                <Play className="h-8 w-8 text-white" />
+              </div>
+            </div>
+          </div>
+        ) : (
+          // Renderização de imagem (comportamento original)
+          <img
+            src={displayImage}
+            alt={project.altText || project.title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        )}
         
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -86,17 +105,29 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
                     <DialogTrigger asChild>
                       <button 
                         className="text-white hover:text-primary rounded-full p-1 bg-black/30 flex items-center justify-center"
-                        aria-label="Ampliar imagem"
+                        aria-label={project.isVideo ? "Assistir vídeo" : "Ampliar imagem"}
                       >
-                        <Maximize className="h-4 w-4" />
+                        {project.isVideo ? 
+                          <Play className="h-4 w-4" /> : 
+                          <Maximize className="h-4 w-4" />
+                        }
                       </button>
                     </DialogTrigger>
                     <DialogContent className="max-w-5xl p-1 bg-transparent border-none">
-                      <img 
-                        src={displayImage} 
-                        alt={project.altText || project.title} 
-                        className="w-full h-auto" 
-                      />
+                      {project.isVideo && project.videoUrl ? (
+                        <video 
+                          src={project.videoUrl} 
+                          controls
+                          autoPlay
+                          className="w-full h-auto" 
+                        />
+                      ) : (
+                        <img 
+                          src={displayImage} 
+                          alt={project.altText || project.title} 
+                          className="w-full h-auto" 
+                        />
+                      )}
                     </DialogContent>
                   </Dialog>
                 )}
