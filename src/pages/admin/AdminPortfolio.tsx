@@ -55,20 +55,31 @@ const AdminPortfolio = () => {
   });
   const [isAddMode, setIsAddMode] = useState(false);
 
-  // Carrega os projetos do Supabase ou usa dados mock se ainda não existirem
+  // Carrega os projetos do armazenamento local
   useEffect(() => {
-    const loadProjectsFromStorage = async () => {
+    const loadProjects = async () => {
       try {
         // Verificar se há projetos salvos no armazenamento local
         const storedProjects = localStorage.getItem('portfolioProjects');
         
         if (storedProjects) {
-          setProjects(JSON.parse(storedProjects));
+          const parsedProjects = JSON.parse(storedProjects);
+          
+          // Garantir que todos os projetos tenham as propriedades isVideo e videoUrl
+          const normalizedProjects = parsedProjects.map((project: Project) => ({
+            ...project,
+            isVideo: project.isVideo === undefined ? false : project.isVideo,
+            videoUrl: project.videoUrl || ""
+          }));
+          
+          setProjects(normalizedProjects);
+          console.log("Projetos carregados:", normalizedProjects);
         } else {
           // Se não houver no armazenamento local, usar os projetos iniciais
           setProjects(initialProjects);
           // Salvar no armazenamento local para futuras sessões
           localStorage.setItem('portfolioProjects', JSON.stringify(initialProjects));
+          console.log("Projetos iniciais carregados");
         }
       } catch (error) {
         console.error("Erro ao carregar projetos:", error);
@@ -79,7 +90,7 @@ const AdminPortfolio = () => {
       }
     };
 
-    loadProjectsFromStorage();
+    loadProjects();
   }, []);
 
   const handleEdit = (project: Project) => {
@@ -120,16 +131,23 @@ const AdminPortfolio = () => {
     console.log("Projeto a ser salvo:", updatedProject);
     
     try {
+      // Garantir que as propriedades isVideo e videoUrl estejam definidas
+      const normalizedProject = {
+        ...updatedProject,
+        isVideo: updatedProject.isVideo === undefined ? false : updatedProject.isVideo,
+        videoUrl: updatedProject.videoUrl || ""
+      };
+      
       let updatedProjects: Project[];
       
       if (isAddMode) {
         // Adicionar novo projeto
-        updatedProjects = [...projects, updatedProject];
+        updatedProjects = [...projects, normalizedProject];
         toast.success("Projeto adicionado com sucesso!");
       } else if (editing) {
         // Atualizar projeto existente
         updatedProjects = projects.map((project) =>
-          project.id === editing ? updatedProject : project
+          project.id === editing ? normalizedProject : project
         );
         toast.success("Projeto atualizado com sucesso!");
       } else {
@@ -140,6 +158,7 @@ const AdminPortfolio = () => {
       // Atualizar estado e armazenamento local
       setProjects(updatedProjects);
       localStorage.setItem('portfolioProjects', JSON.stringify(updatedProjects));
+      console.log("Projetos atualizados:", updatedProjects);
       
       // Limpar o modo de edição
       setEditing(null);

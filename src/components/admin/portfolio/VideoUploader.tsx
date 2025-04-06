@@ -2,7 +2,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Upload, Video, X } from "lucide-react";
 import { type VideoUploaderProps } from "./formTypes";
@@ -15,6 +14,7 @@ export function VideoUploader({
   setIsUploading 
 }: VideoUploaderProps) {
   const [progress, setProgress] = useState(0);
+  const [videoError, setVideoError] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -34,11 +34,11 @@ export function VideoUploader({
     // Preparar upload
     setIsUploading(true);
     setProgress(0);
+    setVideoError(false);
     
     try {
-      // Gerar URL temporária para testes
+      // Simular progresso de upload para melhor UX
       const simulatedUpload = async () => {
-        // Simular progresso de upload
         let currentProgress = 0;
         const interval = setInterval(() => {
           currentProgress += Math.random() * 10;
@@ -62,13 +62,13 @@ export function VideoUploader({
       // Para demonstração, usar apenas URL local do arquivo
       await simulatedUpload();
       
-      /* Comentado para evitar erros de permissão no Supabase
+      /* Implementação real com Supabase (desativada para evitar erros de bloqueio)
       // Gerar nome de arquivo único para evitar colisões
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `videos/${fileName}`;
       
-      // Upload para o Supabase Storage
+      // Preparar upload para o Supabase Storage
       const { error: uploadError, data } = await supabase.storage
         .from('portfolio')
         .upload(filePath, file, {
@@ -129,15 +129,21 @@ export function VideoUploader({
     disabled: isUploading
   });
   
+  const handleVideoError = () => {
+    setVideoError(true);
+    toast.error("Erro ao carregar o vídeo. Tente novamente.");
+  };
+  
   return (
     <div className="space-y-4">
-      {videoUrl ? (
+      {videoUrl && !videoError ? (
         <div className="space-y-4">
           <div className="relative aspect-video bg-muted rounded-md overflow-hidden border border-border">
             <video
               src={videoUrl}
               className="w-full h-full object-cover"
               controls
+              onError={handleVideoError}
             />
             <Button
               variant="destructive"

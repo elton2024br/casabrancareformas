@@ -2,7 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { type Project } from "@/components/ui/project-card";
-import { Edit, Trash2, Video } from "lucide-react";
+import { Edit, Trash2, Video, AlertCircle } from "lucide-react";
+import { useState } from "react";
 
 interface ProjectCardProps {
   project: Project;
@@ -11,40 +12,56 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
+  const [videoError, setVideoError] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  // Tratamento de fallback para vídeos
+  const handleVideoError = () => {
+    console.log(`Erro ao carregar vídeo para o projeto: ${project.title}`);
+    setVideoError(true);
+  };
+
+  // Tratamento de fallback para imagens
+  const handleImageError = () => {
+    console.log(`Erro ao carregar imagem para o projeto: ${project.title}`);
+    setImageError(true);
+  };
+
   return (
     <Card className="overflow-hidden">
       <div className="aspect-video relative overflow-hidden">
-        {project.isVideo && project.videoUrl ? (
+        {project.isVideo && project.videoUrl && !videoError ? (
           <div className="relative h-full w-full bg-muted/80">
+            {/* Vídeo com fallback aprimorado */}
             <video
               src={project.videoUrl}
               className="h-full w-full object-cover"
               controls={false}
               muted
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-                const parent = e.currentTarget.parentElement;
-                if (parent) {
-                  parent.classList.add("flex", "items-center", "justify-center");
-                  const icon = document.createElement("div");
-                  icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
-                  parent.appendChild(icon);
-                }
-              }}
+              onError={handleVideoError}
+              preload="metadata"
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <Video className="h-12 w-12 text-white opacity-70" />
             </div>
           </div>
         ) : (
-          <img
-            src={project.imageUrl}
-            alt={project.title}
-            className="h-full w-full object-cover"
-            onError={(e) => {
-              e.currentTarget.src = "https://via.placeholder.com/400x300?text=Imagem+não+encontrada";
-            }}
-          />
+          <>
+            {/* Imagem com fallback aprimorado */}
+            {imageError ? (
+              <div className="h-full w-full flex items-center justify-center bg-muted">
+                <AlertCircle className="h-12 w-12 text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">Imagem indisponível</span>
+              </div>
+            ) : (
+              <img
+                src={project.imageUrl}
+                alt={project.title}
+                className="h-full w-full object-cover"
+                onError={handleImageError}
+              />
+            )}
+          </>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
       </div>
