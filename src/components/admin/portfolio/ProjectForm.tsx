@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,12 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [isVideo, setIsVideo] = useState<boolean>(project.isVideo || false);
 
+  // Atualizar o estado local quando o projeto mudar (ex: quando editar um projeto)
+  useEffect(() => {
+    setFormData(project);
+    setIsVideo(project.isVideo || false);
+  }, [project]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -37,8 +43,47 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Incluir o flag isVideo nos dados do projeto
-    onSubmit({ ...formData, isVideo });
+    
+    // Validação dos campos obrigatórios
+    if (!formData.title.trim()) {
+      alert("Título é obrigatório");
+      return;
+    }
+    
+    if (!formData.category.trim()) {
+      alert("Categoria é obrigatória");
+      return;
+    }
+    
+    if (!formData.description.trim()) {
+      alert("Descrição é obrigatória");
+      return;
+    }
+    
+    // Validação condicional: se isVideo, videoUrl é obrigatório
+    if (isVideo && !formData.videoUrl) {
+      alert("Por favor, faça upload de um vídeo para o projeto");
+      return;
+    }
+    
+    // Se não for vídeo, imageUrl é obrigatório
+    if (!isVideo && !formData.imageUrl) {
+      alert("Por favor, adicione uma imagem para o projeto");
+      return;
+    }
+    
+    // Incluir o flag isVideo e videoUrl nos dados do projeto
+    const finalProject: Project = {
+      ...formData,
+      isVideo,
+      // Se não for vídeo, garantir que videoUrl seja string vazia
+      videoUrl: isVideo ? formData.videoUrl : "",
+      // Se for vídeo, garantir que imageUrl tenha um valor para exibir como thumbnail
+      imageUrl: formData.imageUrl || "https://via.placeholder.com/400x300?text=Video+Thumbnail"
+    };
+    
+    console.log("Enviando projeto:", finalProject);
+    onSubmit(finalProject);
   };
 
   const clearPreviewImage = () => {
@@ -51,6 +96,11 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
 
   const handleIsVideoChange = (checked: boolean) => {
     setIsVideo(checked);
+    
+    // Se desativar o vídeo, limpar a URL do vídeo
+    if (!checked) {
+      clearVideo();
+    }
   };
 
   return (

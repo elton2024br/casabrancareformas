@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { Maximize, Play } from "lucide-react";
 import {
   Dialog,
@@ -34,6 +34,7 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
   ({ project, className, featured = false, enableModalView = false }, ref) => {
     // Use premium image if available, otherwise fallback to original
     const displayImage = project.premiumImage || project.imageUrl;
+    const [videoError, setVideoError] = useState(false);
     
     console.log("Renderizando projeto:", project.title, "isVideo:", project.isVideo, "videoUrl:", project.videoUrl);
     
@@ -46,14 +47,15 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
           className
         )}
       >
-        {project.isVideo && project.videoUrl ? (
+        {project.isVideo && project.videoUrl && !videoError ? (
           // Renderização de vídeo
           <div className="h-full w-full relative">
             <video
               src={project.videoUrl}
-              poster={displayImage}
+              poster={displayImage || "/placeholder.svg"}
               className="h-full w-full object-cover"
               preload="metadata"
+              onError={() => setVideoError(true)}
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="bg-primary/80 rounded-full p-4">
@@ -62,12 +64,15 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
             </div>
           </div>
         ) : (
-          // Renderização de imagem (comportamento original)
+          // Renderização de imagem (comportamento original ou fallback)
           <img
-            src={displayImage}
+            src={displayImage || "/placeholder.svg"}
             alt={project.altText || project.title}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
+            onError={(e) => {
+              e.currentTarget.src = "https://via.placeholder.com/400x300?text=Imagem+não+encontrada";
+            }}
           />
         )}
         
@@ -75,9 +80,16 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
             <div className="translate-y-4 transform transition-transform duration-300 group-hover:translate-y-0">
-              <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-2">
-                {project.category}
-              </span>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                  {project.category}
+                </span>
+                {project.isVideo && (
+                  <span className="inline-block rounded-full bg-indigo-100 px-3 py-1 text-xs font-medium text-indigo-800">
+                    Vídeo
+                  </span>
+                )}
+              </div>
               <h3 className="text-xl font-medium text-white">{project.title}</h3>
               <p className="mt-1 line-clamp-2 text-sm text-white/80">{project.description}</p>
               <div className="mt-3 flex items-center justify-between">
@@ -116,18 +128,22 @@ export const ProjectCard = forwardRef<HTMLDivElement, ProjectCardProps>(
                       </button>
                     </DialogTrigger>
                     <DialogContent className="max-w-5xl p-1 bg-transparent border-none">
-                      {project.isVideo && project.videoUrl ? (
+                      {project.isVideo && project.videoUrl && !videoError ? (
                         <video 
                           src={project.videoUrl} 
                           controls
                           autoPlay
-                          className="w-full h-auto" 
+                          className="w-full h-auto"
+                          onError={() => setVideoError(true)}
                         />
                       ) : (
                         <img 
-                          src={displayImage} 
+                          src={displayImage || "/placeholder.svg"} 
                           alt={project.altText || project.title} 
-                          className="w-full h-auto" 
+                          className="w-full h-auto"
+                          onError={(e) => {
+                            e.currentTarget.src = "https://via.placeholder.com/800x600?text=Imagem+não+encontrada";
+                          }}
                         />
                       )}
                     </DialogContent>
