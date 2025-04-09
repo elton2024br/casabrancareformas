@@ -1,112 +1,102 @@
+
+// Utilitário para pré-carregar componentes não críticos após o carregamento da página inicial
+// Isso melhora a experiência do usuário ao navegar pelo site
+
 /**
- * Utilitário para pré-carregar componentes não críticos após a renderização inicial
- * Isso melhora a performance percebida e reduz o tempo de interação
+ * Verificamos se estamos em um ambiente com window para evitar erros durante SSR
  */
+const isClient = typeof window !== 'undefined';
 
-// Definição do tipo para requestIdleCallback para compatibilidade
-type RequestIdleCallbackHandle = any;
-interface RequestIdleCallbackOptions {
-  timeout: number;
-}
-interface RequestIdleCallbackDeadline {
-  readonly didTimeout: boolean;
-  timeRemaining: () => number;
-}
-
-// Declaração de requestIdleCallback para TypeScript
-declare global {
-  interface Window {
-    requestIdleCallback: (
-      callback: (deadline: RequestIdleCallbackDeadline) => void,
-      opts?: RequestIdleCallbackOptions
-    ) => RequestIdleCallbackHandle;
-    cancelIdleCallback: (handle: RequestIdleCallbackHandle) => void;
-  }
-}
-
-// Lista de caminhos de importação para carregar em segundo plano
+/**
+ * Componentes a serem pré-carregados
+ */
 const COMPONENTS_TO_PREFETCH = [
-  () => import('../components/home/ServicesSection'),
-  () => import('../components/home/ProjectsSection'),
-  () => import('../components/home/TestimonialsSection'),
-  () => import('../components/ui/accordion'),
-  () => import('../components/ui/dialog'),
-  () => import('../components/portfolio/PortfolioGrid')
+  "./pages/Portfolio.tsx",
+  "./pages/About.tsx",
+  "./pages/Contato.tsx",
+  "./pages/Depoimentos.tsx"
 ];
 
 /**
- * Função para realizar o prefetch de componentes
- * Executada após o carregamento principal da página estar completo
+ * Implementação de polyfill para requestIdleCallback
  */
-export function prefetchComponents() {
-  // Verificar se requestIdleCallback está disponível
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(
-      () => {
-        console.log('Iniciando prefetch de componentes não críticos...');
-        loadComponents();
-      },
-      { timeout: 2000 }
-    );
-  } else {
-    // Fallback para setTimeout se requestIdleCallback não estiver disponível
-    setTimeout(() => {
-      console.log('Iniciando prefetch de componentes não críticos (fallback)...');
-      loadComponents();
-    }, 2000);
-  }
+const requestIdleCallbackPolyfill = (
+  callback: IdleRequestCallback,
+  options?: IdleRequestOptions
+): number => {
+  const start = Date.now();
+  return window.setTimeout(() => {
+    callback({
+      didTimeout: false,
+      timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
+    });
+  }, options?.timeout || 1);
+};
+
+/**
+ * Função segura que usa a API nativa quando disponível ou o polyfill quando necessário
+ */
+const safeRequestIdleCallback = (
+  callback: IdleRequestCallback,
+  options?: IdleRequestOptions
+): number => {
+  if (!isClient) return 0;
   
-  // Pré-conectar a domínios relevantes (APIs, etc)
-  preconnectToDomains();
-}
+  return (window.requestIdleCallback || requestIdleCallbackPolyfill)(
+    callback,
+    options
+  );
+};
 
 /**
- * Carrega os componentes sequencialmente
+ * Função segura para cancelamento que usa a API nativa quando disponível
  */
-function loadComponents() {
-  // Carregar cada componente sequencialmente para não sobrecarregar
-  COMPONENTS_TO_PREFETCH.forEach((importFunc, index) => {
-    // Escalonar carregamentos com atraso progressivo para evitar congestionamento
-    setTimeout(() => {
-      importFunc()
-        .then(() => console.debug(`Componente ${index + 1} pré-carregado`))
-        .catch(() => {}); // Silenciar erros de pré-carregamento
-    }, index * 300); // 300ms de intervalo entre cada carregamento
-  });
-}
-
-/**
- * Pré-conectar a domínios externos usados pela aplicação
- * Reduz o tempo de inicialização de conexões futuras
- */
-function preconnectToDomains() {
-  const domains = [
-    'https://fonts.googleapis.com',
-    'https://fonts.gstatic.com',
-    'https://img.freepik.com',
-    'https://lpxwmrmylransbtovyba.supabase.co'
-  ];
+const safeCancelIdleCallback = (handle: number): void => {
+  if (!isClient) return;
   
-  domains.forEach(domain => {
-    const link = document.createElement('link');
-    link.rel = 'preconnect';
-    link.href = domain;
-    link.crossOrigin = 'anonymous';
-    document.head.appendChild(link);
-  });
-}
+  (window.cancelIdleCallback || window.clearTimeout)(handle);
+};
 
 /**
- * Pré-carregamento de imagens críticas
- * Melhora a métrica LCP (Largest Contentful Paint)
- * @param urls Lista de URLs de imagens a serem pré-carregadas
+ * Pré-carrega os componentes em segundo plano
  */
-export function preloadCriticalImages(urls: string[]) {
-  urls.forEach(url => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as = 'image';
-    link.href = url;
+export const prefetchComponents = (): void => {
+  // Se não estamos no cliente, saímos imediatamente
+  if (!isClient) return;
+
+  // Pré-carregamento em segundo plano quando o navegador estiver ocioso
+  safeRequestIdleCallback(
+    (deadline) => {
+      // Se temos pouco tempo disponível, adiamos para o próximo período de inatividade
+      if (deadline.timeRemaining() < 10) {
+        safeRequestIdleCallback(prefetchHandler);
+        return;
+      }
+
+      prefetchHandler();
+    },
+    { timeout: 1000 }
+  );
+};
+
+/**
+ * Manipulador para pré-carregar os componentes
+ */
+const prefetchHandler = (): void => {
+  // Não funciona no SSR
+  if (!isClient) return;
+
+  // Cria um link para cada componente
+  COMPONENTS_TO_PREFETCH.forEach((componentPath) => {
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.as = "script";
+    link.href = componentPath;
+    link.crossOrigin = "anonymous"; // Importante para alguns CDNs
+
+    // Adiciona o link ao cabeçalho
     document.head.appendChild(link);
+    
+    console.debug(`Prefetched component: ${componentPath}`);
   });
-} 
+};

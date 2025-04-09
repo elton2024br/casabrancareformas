@@ -1,0 +1,28 @@
+
+/* Arquivo globals.css - Estilos globais do projeto */
+/* Este arquivo é criado como backup, mas não é mais importado diretamente pelo App.tsx */
+/* Os estilos estão agora no arquivo index.css */
+
+/* Importa os estilos do Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Variáveis CSS e estilos globais adicionais */
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+/* Estilos globais básicos */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

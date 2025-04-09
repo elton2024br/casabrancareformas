@@ -33,6 +33,142 @@ export type Database = {
         }
         Relationships: []
       }
+      attraction_categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      attraction_reviews: {
+        Row: {
+          attraction_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          attraction_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          user_id: string
+        }
+        Update: {
+          attraction_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attraction_reviews_attraction_id_fkey"
+            columns: ["attraction_id"]
+            isOneToOne: false
+            referencedRelation: "attractions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attractions: {
+        Row: {
+          address: string | null
+          category_id: string
+          city: string
+          created_at: string
+          description: string
+          facilities: string[] | null
+          id: string
+          images: string[] | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          opening_hours: Json | null
+          phone: string | null
+          price_range: string | null
+          short_description: string
+          slug: string
+          state: string
+          thumbnail: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          category_id: string
+          city: string
+          created_at?: string
+          description: string
+          facilities?: string[] | null
+          id?: string
+          images?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          opening_hours?: Json | null
+          phone?: string | null
+          price_range?: string | null
+          short_description: string
+          slug: string
+          state: string
+          thumbnail?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          category_id?: string
+          city?: string
+          created_at?: string
+          description?: string
+          facilities?: string[] | null
+          id?: string
+          images?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          opening_hours?: Json | null
+          phone?: string | null
+          price_range?: string | null
+          short_description?: string
+          slug?: string
+          state?: string
+          thumbnail?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attractions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "attraction_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blocked_words: {
         Row: {
           created_at: string
@@ -297,6 +433,149 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "forum_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      itineraries: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          name: string
+          optimization_type: string | null
+          preferences: Json | null
+          start_date: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          name: string
+          optimization_type?: string | null
+          preferences?: Json | null
+          start_date: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          name?: string
+          optimization_type?: string | null
+          preferences?: Json | null
+          start_date?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      itinerary_days: {
+        Row: {
+          created_at: string | null
+          date: string
+          day_number: number
+          id: string
+          itinerary_id: string | null
+          notes: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          day_number: number
+          id?: string
+          itinerary_id?: string | null
+          notes?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          day_number?: number
+          id?: string
+          itinerary_id?: string | null
+          notes?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "itinerary_days_itinerary_id_fkey"
+            columns: ["itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "itineraries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      itinerary_stops: {
+        Row: {
+          attraction_id: string | null
+          created_at: string | null
+          custom_location_address: string | null
+          custom_location_latitude: number | null
+          custom_location_longitude: number | null
+          custom_location_name: string | null
+          distance_from_previous: number | null
+          duration_minutes: number | null
+          end_time: string | null
+          id: string
+          itinerary_day_id: string | null
+          notes: string | null
+          start_time: string | null
+          stop_order: number
+          updated_at: string | null
+        }
+        Insert: {
+          attraction_id?: string | null
+          created_at?: string | null
+          custom_location_address?: string | null
+          custom_location_latitude?: number | null
+          custom_location_longitude?: number | null
+          custom_location_name?: string | null
+          distance_from_previous?: number | null
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          itinerary_day_id?: string | null
+          notes?: string | null
+          start_time?: string | null
+          stop_order: number
+          updated_at?: string | null
+        }
+        Update: {
+          attraction_id?: string | null
+          created_at?: string | null
+          custom_location_address?: string | null
+          custom_location_latitude?: number | null
+          custom_location_longitude?: number | null
+          custom_location_name?: string | null
+          distance_from_previous?: number | null
+          duration_minutes?: number | null
+          end_time?: string | null
+          id?: string
+          itinerary_day_id?: string | null
+          notes?: string | null
+          start_time?: string | null
+          stop_order?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "itinerary_stops_attraction_id_fkey"
+            columns: ["attraction_id"]
+            isOneToOne: false
+            referencedRelation: "attractions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "itinerary_stops_itinerary_day_id_fkey"
+            columns: ["itinerary_day_id"]
+            isOneToOne: false
+            referencedRelation: "itinerary_days"
             referencedColumns: ["id"]
           },
         ]
@@ -904,6 +1183,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_favorites: {
+        Row: {
+          attraction_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          attraction_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          attraction_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_favorites_attraction_id_fkey"
+            columns: ["attraction_id"]
+            isOneToOne: false
+            referencedRelation: "attractions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_presence: {
         Row: {
           id: string
@@ -1178,9 +1486,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      __plpgsql_show_dependency_tb:
-        | {
-            Args: {
+      __plpgsql_show_dependency_tb: {
+        Args:
+          | {
               funcoid: unknown
               relid?: unknown
               anyelememttype?: unknown
@@ -1189,16 +1497,7 @@ export type Database = {
               anycompatibletype?: unknown
               anycompatiblerangetype?: unknown
             }
-            Returns: {
-              type: string
-              oid: unknown
-              schema: string
-              name: string
-              params: string
-            }[]
-          }
-        | {
-            Args: {
+          | {
               name: string
               relid?: unknown
               anyelememttype?: unknown
@@ -1207,18 +1506,20 @@ export type Database = {
               anycompatibletype?: unknown
               anycompatiblerangetype?: unknown
             }
-            Returns: {
-              type: string
-              oid: unknown
-              schema: string
-              name: string
-              params: string
-            }[]
-          }
+        Returns: {
+          type: string
+          oid: unknown
+          schema: string
+          name: string
+          params: string
+        }[]
+      }
+      calculate_attraction_rating: {
+        Args: { attraction_uuid: string }
+        Returns: number
+      }
       check_daily_service_requests_limit: {
-        Args: {
-          user_id: string
-        }
+        Args: { user_id: string }
         Returns: boolean
       }
       get_ordered_proposals: {
@@ -1252,9 +1553,7 @@ export type Database = {
         }[]
       }
       get_proposal_votes: {
-        Args: {
-          proposal_uuid: string
-        }
+        Args: { proposal_uuid: string }
         Returns: {
           upvotes: number
           downvotes: number
@@ -1265,26 +1564,20 @@ export type Database = {
         Returns: string
       }
       is_admin: {
-        Args: {
-          input_user_id: string
-        }
+        Args: { input_user_id: string }
         Returns: boolean
       }
       is_provider: {
-        Args: {
-          user_id: string
-        }
+        Args: { user_id: string }
         Returns: boolean
       }
       is_valid_cpf: {
-        Args: {
-          cpf: string
-        }
+        Args: { cpf: string }
         Returns: boolean
       }
-      plpgsql_check_function:
-        | {
-            Args: {
+      plpgsql_check_function: {
+        Args:
+          | {
               funcoid: unknown
               relid?: unknown
               format?: string
@@ -1307,10 +1600,7 @@ export type Database = {
               incomment_options_usage_warning?: boolean
               constant_tracing?: boolean
             }
-            Returns: string[]
-          }
-        | {
-            Args: {
+          | {
               name: string
               relid?: unknown
               format?: string
@@ -1333,11 +1623,11 @@ export type Database = {
               incomment_options_usage_warning?: boolean
               constant_tracing?: boolean
             }
-            Returns: string[]
-          }
-      plpgsql_check_function_tb:
-        | {
-            Args: {
+        Returns: string[]
+      }
+      plpgsql_check_function_tb: {
+        Args:
+          | {
               funcoid: unknown
               relid?: unknown
               fatal_errors?: boolean
@@ -1359,22 +1649,7 @@ export type Database = {
               incomment_options_usage_warning?: boolean
               constant_tracing?: boolean
             }
-            Returns: {
-              functionid: unknown
-              lineno: number
-              statement: string
-              sqlstate: string
-              message: string
-              detail: string
-              hint: string
-              level: string
-              position: number
-              query: string
-              context: string
-            }[]
-          }
-        | {
-            Args: {
+          | {
               name: string
               relid?: unknown
               fatal_errors?: boolean
@@ -1396,141 +1671,74 @@ export type Database = {
               incomment_options_usage_warning?: boolean
               constant_tracing?: boolean
             }
-            Returns: {
-              functionid: unknown
-              lineno: number
-              statement: string
-              sqlstate: string
-              message: string
-              detail: string
-              hint: string
-              level: string
-              position: number
-              query: string
-              context: string
-            }[]
-          }
+        Returns: {
+          functionid: unknown
+          lineno: number
+          statement: string
+          sqlstate: string
+          message: string
+          detail: string
+          hint: string
+          level: string
+          position: number
+          query: string
+          context: string
+        }[]
+      }
       plpgsql_check_pragma: {
         Args: Record<PropertyKey, never>
         Returns: number
       }
       plpgsql_check_profiler: {
-        Args: {
-          enable?: boolean
-        }
+        Args: { enable?: boolean }
         Returns: boolean
       }
       plpgsql_check_tracer: {
-        Args: {
-          enable?: boolean
-          verbosity?: string
-        }
+        Args: { enable?: boolean; verbosity?: string }
         Returns: boolean
       }
-      plpgsql_coverage_branches:
-        | {
-            Args: {
-              funcoid: unknown
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              name: string
-            }
-            Returns: number
-          }
-      plpgsql_coverage_statements:
-        | {
-            Args: {
-              funcoid: unknown
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              name: string
-            }
-            Returns: number
-          }
-      plpgsql_profiler_function_statements_tb:
-        | {
-            Args: {
-              funcoid: unknown
-            }
-            Returns: {
-              stmtid: number
-              parent_stmtid: number
-              parent_note: string
-              block_num: number
-              lineno: number
-              queryid: number
-              exec_stmts: number
-              exec_stmts_err: number
-              total_time: number
-              avg_time: number
-              max_time: number
-              processed_rows: number
-              stmtname: string
-            }[]
-          }
-        | {
-            Args: {
-              name: string
-            }
-            Returns: {
-              stmtid: number
-              parent_stmtid: number
-              parent_note: string
-              block_num: number
-              lineno: number
-              queryid: number
-              exec_stmts: number
-              exec_stmts_err: number
-              total_time: number
-              avg_time: number
-              max_time: number
-              processed_rows: number
-              stmtname: string
-            }[]
-          }
-      plpgsql_profiler_function_tb:
-        | {
-            Args: {
-              funcoid: unknown
-            }
-            Returns: {
-              lineno: number
-              stmt_lineno: number
-              queryids: number[]
-              cmds_on_row: number
-              exec_stmts: number
-              exec_stmts_err: number
-              total_time: number
-              avg_time: number
-              max_time: number[]
-              processed_rows: number[]
-              source: string
-            }[]
-          }
-        | {
-            Args: {
-              name: string
-            }
-            Returns: {
-              lineno: number
-              stmt_lineno: number
-              queryids: number[]
-              cmds_on_row: number
-              exec_stmts: number
-              exec_stmts_err: number
-              total_time: number
-              avg_time: number
-              max_time: number[]
-              processed_rows: number[]
-              source: string
-            }[]
-          }
+      plpgsql_coverage_branches: {
+        Args: { funcoid: unknown } | { name: string }
+        Returns: number
+      }
+      plpgsql_coverage_statements: {
+        Args: { funcoid: unknown } | { name: string }
+        Returns: number
+      }
+      plpgsql_profiler_function_statements_tb: {
+        Args: { funcoid: unknown } | { name: string }
+        Returns: {
+          stmtid: number
+          parent_stmtid: number
+          parent_note: string
+          block_num: number
+          lineno: number
+          queryid: number
+          exec_stmts: number
+          exec_stmts_err: number
+          total_time: number
+          avg_time: number
+          max_time: number
+          processed_rows: number
+          stmtname: string
+        }[]
+      }
+      plpgsql_profiler_function_tb: {
+        Args: { funcoid: unknown } | { name: string }
+        Returns: {
+          lineno: number
+          stmt_lineno: number
+          queryids: number[]
+          cmds_on_row: number
+          exec_stmts: number
+          exec_stmts_err: number
+          total_time: number
+          avg_time: number
+          max_time: number[]
+          processed_rows: number[]
+          source: string
+        }[]
+      }
       plpgsql_profiler_functions_all: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1553,36 +1761,16 @@ export type Database = {
         Returns: undefined
       }
       plpgsql_profiler_reset: {
-        Args: {
-          funcoid: unknown
-        }
+        Args: { funcoid: unknown }
         Returns: undefined
       }
       plpgsql_profiler_reset_all: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
-      plpgsql_show_dependency_tb:
-        | {
-            Args: {
-              fnname: string
-              relid?: unknown
-              anyelememttype?: unknown
-              anyenumtype?: unknown
-              anyrangetype?: unknown
-              anycompatibletype?: unknown
-              anycompatiblerangetype?: unknown
-            }
-            Returns: {
-              type: string
-              oid: unknown
-              schema: string
-              name: string
-              params: string
-            }[]
-          }
-        | {
-            Args: {
+      plpgsql_show_dependency_tb: {
+        Args:
+          | {
               funcoid: unknown
               relid?: unknown
               anyelememttype?: unknown
@@ -1591,14 +1779,23 @@ export type Database = {
               anycompatibletype?: unknown
               anycompatiblerangetype?: unknown
             }
-            Returns: {
-              type: string
-              oid: unknown
-              schema: string
-              name: string
-              params: string
-            }[]
-          }
+          | {
+              fnname: string
+              relid?: unknown
+              anyelememttype?: unknown
+              anyenumtype?: unknown
+              anyrangetype?: unknown
+              anycompatibletype?: unknown
+              anycompatiblerangetype?: unknown
+            }
+        Returns: {
+          type: string
+          oid: unknown
+          schema: string
+          name: string
+          params: string
+        }[]
+      }
     }
     Enums: {
       city: "ubatuba" | "caraguatatuba" | "sao_sebastiao"
@@ -1638,27 +1835,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -1666,20 +1865,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -1687,20 +1888,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -1708,21 +1911,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -1731,6 +1936,46 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      city: ["ubatuba", "caraguatatuba", "sao_sebastiao"],
+      content_status: ["pending", "approved", "rejected"],
+      notification_frequency: ["never", "daily", "three_times_day", "weekly"],
+      proposal_category: [
+        "Infraestrutura",
+        "Educação",
+        "Saúde",
+        "Transporte",
+        "Meio Ambiente",
+        "Cultura",
+      ],
+      proposal_status: ["proposta", "em_analise", "em_andamento", "concluida"],
+      report_category: [
+        "irregular_activity",
+        "harassment",
+        "unsafe_conditions",
+        "other",
+      ],
+      report_status: ["pending", "investigating", "resolved", "rejected"],
+      report_type: ["suggestion", "complaint", "incident", "other"],
+      request_status: ["pending", "in_progress", "completed", "cancelled"],
+      service_category: [
+        "reforma_geral",
+        "construcao",
+        "pintura",
+        "hidraulica",
+        "eletrica",
+        "alvenaria",
+        "carpintaria",
+        "jardinagem",
+      ],
+      support_status: ["pending", "in_progress", "resolved"],
+      user_role: ["admin", "moderator", "vendor", "user"],
+    },
+  },
+} as const
