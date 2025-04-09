@@ -1,7 +1,5 @@
-
 import { useState, useEffect } from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import MainLayout from "@/components/layout/MainLayout";
 import { SeoMeta } from "@/components/ui/seo-meta";
 import { type Project } from "@/components/ui/project-card";
 import { PortfolioHero } from "@/components/portfolio/PortfolioHero";
@@ -154,47 +152,45 @@ const Portfolio = () => {
         keywords="portfólio de reformas, projetos de design de interiores, reforma apartamento, reforma comercial, reforma residencial"
       />
       
-      <Header />
-      
-      {/* Hero Section */}
-      <div ref={(el) => addToRefs(el, 0)}>
-        <PortfolioHero />
-      </div>
-
-      {/* Categories Filter */}
-      <div ref={(el) => addToRefs(el, 1)}>
-        <PortfolioFilter 
-          categories={categories} 
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
-      </div>
-
-      {/* Projects Grid */}
-      <section className="py-16 md:py-24">
-        <div className="container px-4 md:px-6 mx-auto">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            </div>
-          ) : (
-            <PortfolioGrid 
-              projects={filteredProjects} 
-              addToRefs={addToRefs}
-            />
-          )}
-          
-          <PortfolioSchemaData />
+      <MainLayout>
+        {/* Hero Section */}
+        <div ref={(el) => addToRefs(el, 0)}>
+          <PortfolioHero />
         </div>
-      </section>
 
-      {/* CTA Section */}
-      <PortfolioCTA 
-        addToRefs={addToRefs}
-        refIndex={allProjects.length + 2}
-      />
-      
-      <Footer />
+        {/* Categories Filter */}
+        <div ref={(el) => addToRefs(el, 1)}>
+          <PortfolioFilter 
+            categories={categories} 
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        </div>
+
+        {/* Projects Grid */}
+        <section className="py-16 md:py-24">
+          <div className="container px-4 md:px-6 mx-auto">
+            {isLoading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <PortfolioGrid 
+                projects={filteredProjects} 
+                addToRefs={addToRefs}
+              />
+            )}
+            
+            <PortfolioSchemaData />
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <PortfolioCTA 
+          addToRefs={addToRefs}
+          refIndex={allProjects.length + 2}
+        />
+      </MainLayout>
     </>
   );
 };

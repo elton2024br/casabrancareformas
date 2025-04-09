@@ -1,7 +1,6 @@
-
 import { useRef, useEffect } from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import MainLayout from "@/components/layout/MainLayout";
+import { SeoMeta } from "@/components/ui/seo-meta";
 import { SectionHeading } from "@/components/ui/section-heading";
 import ContactForm from "@/components/forms/ContactForm";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
@@ -72,90 +71,84 @@ const Contato = () => {
 
   return (
     <>
-      <Header />
+      <SeoMeta 
+        title="Contato | Casa Branca Reformas"
+        description="Entre em contato com a Casa Branca Reformas para orçamentos, dúvidas ou informações sobre nossos serviços de reforma residencial e comercial."
+        keywords="contato casabranca, orçamento reforma, reforma residencial, reforma comercial"
+      />
       
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 md:pt-40 md:pb-20 bg-secondary">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div
-            className="max-w-3xl mx-auto text-center space-y-4"
-            ref={(el) => addToRefs(el, 0)}
-          >
-            <SectionHeading
-              title="Entre em Contato"
-              subtitle="Estamos prontos para transformar seu espaço. Fale conosco!"
-              centered
-            />
-            <div className="pt-4">
-              <Button asChild size="lg">
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  Solicitar Orçamento via WhatsApp
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Info and Form */}
-      <section className="py-16 md:py-24">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div className="grid gap-12 lg:grid-cols-2">
-            {/* Contact Information */}
-            <div ref={(el) => addToRefs(el, 1)}>
-              <h3 className="text-2xl font-medium mb-6">Informações de Contato</h3>
-              <div className="space-y-6">
-                {contactInfo.map((item, index) => (
-                  <div key={item.title} className="flex items-start">
-                    <div className="mr-4 mt-1">{item.icon}</div>
-                    <div>
-                      <h4 className="font-medium">{item.title}</h4>
-                      {item.link ? (
-                        <a
-                          href={item.link}
-                          className="text-muted-foreground hover:text-primary transition-colors"
-                          target={item.title === "Endereço" || item.title === "Telefone/WhatsApp" ? "_blank" : undefined}
-                          rel={item.title === "Endereço" || item.title === "Telefone/WhatsApp" ? "noopener noreferrer" : undefined}
-                        >
-                          {item.details}
-                        </a>
-                      ) : (
-                        <p className="text-muted-foreground">{item.details}</p>
-                      )}
+      <MainLayout>
+        {/* Main content */}
+        <section className="py-24 md:py-32">
+          <div className="container px-4 md:px-6 mx-auto">
+            <div className="grid gap-12 md:grid-cols-2">
+              {/* Contact Info */}
+              <div>
+                <h1 className="text-3xl font-serif font-medium mb-6">Fale Conosco</h1>
+                <p className="text-muted-foreground mb-8 max-w-md">
+                  Estamos prontos para transformar seu espaço. Entre em contato para tirar dúvidas, solicitar orçamentos ou agendar uma visita técnica.
+                </p>
+                
+                <div className="space-y-6">
+                  {contactInfo.map((item, index) => (
+                    <div key={item.title} className="flex items-start">
+                      <div className="mr-4 mt-1">{item.icon}</div>
+                      <div>
+                        <h4 className="font-medium">{item.title}</h4>
+                        {item.link ? (
+                          <a
+                            href={item.link}
+                            className="text-muted-foreground hover:text-primary transition-colors"
+                            target={item.title === "Endereço" || item.title === "Telefone/WhatsApp" ? "_blank" : undefined}
+                            rel={item.title === "Endereço" || item.title === "Telefone/WhatsApp" ? "noopener noreferrer" : undefined}
+                          >
+                            {item.details}
+                          </a>
+                        ) : (
+                          <p className="text-muted-foreground">{item.details}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Map */}
-              <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Nossa Localização</h3>
-                <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.0976671803936!2d-46.65390548535577!3d-23.563273284682373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1624312345678!5m2!1spt-BR!2sbr"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    title="Mapa da localização"
-                  ></iframe>
+                  ))}
                 </div>
               </div>
-            </div>
-            
-            {/* Contact Form */}
-            <div ref={(el) => addToRefs(el, 2)}>
-              <h3 className="text-2xl font-medium mb-6">Envie uma Mensagem</h3>
-              <div className="bg-white rounded-lg shadow-sm border p-6">
-                <ContactForm />
+              
+              {/* Contact Form */}
+              <div className="bg-card border rounded-lg p-6 md:p-8 shadow-sm">
+                <h2 className="text-xl font-medium mb-4">Envie sua mensagem</h2>
+                
+                <form className="space-y-4">
+                  <ContactForm />
+                </form>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-      
-      <Footer />
+        </section>
+        
+        {/* Map Section */}
+        <section className="py-12 bg-muted/50">
+          <div className="container px-4 md:px-6 mx-auto">
+            <div className="max-w-3xl mx-auto text-center mb-8">
+              <h2 className="text-2xl font-serif font-medium mb-2">Onde Estamos</h2>
+              <p className="text-muted-foreground">
+                Visite nosso escritório para uma reunião presencial.
+              </p>
+            </div>
+            
+            <div className="aspect-[16/9] md:aspect-video rounded-lg overflow-hidden shadow-md">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.0976671803936!2d-46.65390548535577!3d-23.563273284682373!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1624312345678!5m2!1spt-BR!2sbr"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                title="Mapa da localização"
+              ></iframe>
+            </div>
+          </div>
+        </section>
+      </MainLayout>
     </>
   );
 };

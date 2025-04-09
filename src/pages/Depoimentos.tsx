@@ -1,7 +1,6 @@
-
 import { useRef, useEffect } from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import MainLayout from "@/components/layout/MainLayout";
+import { SeoMeta } from "@/components/ui/seo-meta";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TestimonialCard, type Testimonial } from "@/components/ui/testimonial-card";
 import { Button } from "@/components/ui/button";
@@ -92,67 +91,71 @@ const Depoimentos = () => {
 
   return (
     <>
-      <Header />
+      <SeoMeta 
+        title="Depoimentos de Clientes | Casa Branca Reformas"
+        description="Conheça o que nossos clientes têm a dizer sobre nossas reformas residenciais e comerciais. Histórias reais de transformação e satisfação."
+        keywords="depoimentos casa branca, avaliações de reforma, testemunhos clientes, feedback reformas"
+      />
       
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 md:pt-40 md:pb-20 bg-secondary">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div
-            className="max-w-3xl mx-auto text-center space-y-4"
-            ref={(el) => addToRefs(el, 0)}
-          >
-            <SectionHeading
-              title="Depoimentos"
-              subtitle="Veja o que nossos clientes dizem sobre os nossos serviços"
-              centered
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Grid */}
-      <section className="py-16 md:py-24">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
-              <TestimonialCard
-                key={testimonial.id}
-                testimonial={testimonial}
-                ref={(el) => addToRefs(el, 1 + index)}
+      <MainLayout>
+        {/* Hero Section */}
+        <section className="pt-32 pb-16 md:pt-40 md:pb-20 bg-secondary">
+          <div className="container px-4 md:px-6 mx-auto">
+            <div
+              className="max-w-3xl mx-auto text-center space-y-4"
+              ref={(el) => addToRefs(el, 0)}
+            >
+              <SectionHeading
+                title="Depoimentos"
+                subtitle="Veja o que nossos clientes dizem sobre os nossos serviços"
+                centered
               />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-secondary">
-        <div className="container px-4 md:px-6 mx-auto">
-          <div
-            className="max-w-3xl mx-auto text-center space-y-6"
-            ref={(el) => addToRefs(el, testimonials.length + 1)}
-          >
-            <h2 className="text-2xl font-medium md:text-3xl">
-              Pronto para transformar seu espaço?
-            </h2>
-            <p className="text-muted-foreground">
-              Entre em contato conosco para discutir seu projeto e fazer parte da nossa lista de clientes satisfeitos.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-              <Button asChild size="lg">
-                <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-                  Solicitar Orçamento
-                </a>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to="/portfolio">Ver Projetos</Link>
-              </Button>
             </div>
           </div>
-        </div>
-      </section>
-      
-      <Footer />
+        </section>
+
+        {/* Testimonials Grid */}
+        <section className="py-16 md:py-24">
+          <div className="container px-4 md:px-6 mx-auto">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {testimonials.map((testimonial, index) => (
+                <TestimonialCard
+                  key={testimonial.id}
+                  testimonial={testimonial}
+                  ref={(el) => addToRefs(el, 1 + index)}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 bg-secondary">
+          <div className="container px-4 md:px-6 mx-auto">
+            <div
+              className="max-w-3xl mx-auto text-center space-y-6"
+              ref={(el) => addToRefs(el, testimonials.length + 1)}
+            >
+              <h2 className="text-2xl font-medium md:text-3xl">
+                Pronto para transformar seu espaço?
+              </h2>
+              <p className="text-muted-foreground">
+                Entre em contato conosco para discutir seu projeto e fazer parte da nossa lista de clientes satisfeitos.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                <Button asChild size="lg">
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                    Solicitar Orçamento
+                  </a>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link to="/portfolio">Ver Projetos</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </MainLayout>
     </>
   );
 };

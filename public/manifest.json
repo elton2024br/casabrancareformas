@@ -1,0 +1,50 @@
+{
+  "name": "Casa Branca Reformas",
+  "short_name": "Casa Branca",
+  "description": "Design e Execução de Reformas Residenciais e Comerciais",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/placeholder.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Portfólio",
+      "short_name": "Portfólio",
+      "description": "Ver nossos projetos",
+      "url": "/portfolio",
+      "icons": [{ "src": "/placeholder.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Contato",
+      "short_name": "Contato",
+      "description": "Entre em contato conosco",
+      "url": "/contato",
+      "icons": [{ "src": "/placeholder.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    }
+  ],
+  "categories": ["business", "design", "lifestyle", "home", "construction"],
+  "screenshots": [
+    {
+      "src": "/lovable-uploads/e71547ce-5de6-44ec-8b00-1ff5abc20379.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ],
+  "lang": "pt-BR",
+  "prefer_related_applications": false
+} 

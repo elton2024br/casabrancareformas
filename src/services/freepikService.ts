@@ -1,99 +1,9 @@
-
 /**
- * Freepik API Service
- * Handles fetching images from Freepik using the provided API key
+ * Freepik Service (Fallback Only)
+ * Provides fallback images without making external API calls
  */
 
-const FREEPIK_API_KEY = 'FPSX80bb47dc58434c429607e62268e0e346';
-const FREEPIK_API_URL = 'https://api.freepik.com/v1';
-
-// Add retry functionality for more robust API calls
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 1000; // ms
-
-export interface FreepikImage {
-  id: string;
-  title: string;
-  thumbnail: string;
-  source: {
-    url: string;
-  };
-  preview: {
-    url: string;
-  };
-}
-
-export interface FreepikSearchResponse {
-  data: FreepikImage[];
-  meta: {
-    pagination: {
-      total: number;
-      count: number;
-      per_page: number;
-      current_page: number;
-      total_pages: number;
-    };
-  };
-}
-
-// Helper function to add delay between retries
-const delay = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
-
-// Improved search function with retry mechanism
-export const searchFreepikImages = async (query: string, page = 1, limit = 20): Promise<FreepikSearchResponse> => {
-  let retries = 0;
-  
-  while (retries < MAX_RETRIES) {
-    try {
-      console.log(`Attempting to fetch Freepik images for: ${query} (attempt ${retries + 1})`);
-      
-      const response = await fetch(
-        `${FREEPIK_API_URL}/resources/search?query=${encodeURIComponent(
-          query
-        )}&page=${page}&limit=${limit}`,
-        {
-          headers: {
-            'Accept-Language': 'en-US', // Changed to English for better results
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-Freepik-API-Key': FREEPIK_API_KEY,
-            'Origin': window.location.origin,
-          },
-          mode: 'cors',
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Freepik API error: ${response.status}`, errorText);
-        throw new Error(`Freepik API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Freepik API success, received data:', data);
-      return data;
-    } catch (error) {
-      console.error(`Error fetching images from Freepik (attempt ${retries + 1}):`, error);
-      retries++;
-      
-      // If we've reached max retries, return empty data
-      if (retries >= MAX_RETRIES) {
-        console.log('Max retries reached, returning empty data');
-        return { data: [], meta: { pagination: { total: 0, count: 0, per_page: 0, current_page: 0, total_pages: 0 } } };
-      }
-      
-      // Wait before retrying
-      await delay(RETRY_DELAY * retries);
-    }
-  }
-
-  // This should never be reached due to the return in the catch block, but TypeScript needs it
-  return { data: [], meta: { pagination: { total: 0, count: 0, per_page: 0, current_page: 0, total_pages: 0 } } };
-};
-
-// Use fallback images if API fails
+// Fallback images used when the API is unavailable
 const FALLBACK_IMAGES: Record<string, string[]> = {
   'Apartamento': [
     'https://img.freepik.com/premium-photo/modern-living-room-interior-design-with-sofa-decoration_41470-4024.jpg',
@@ -121,64 +31,79 @@ const FALLBACK_IMAGES: Record<string, string[]> = {
   ]
 };
 
-export const getFreepikImageByCategory = async (category: string): Promise<string> => {
-  try {
-    // Enhanced mapping for categories to get more relevant premium images
-    const searchTerms: Record<string, string> = {
-      'Apartamento': 'modern luxury apartment interior design premium',
-      'Cozinha': 'luxury modern kitchen design interior premium',
-      'Comercial': 'elegant commercial office space interior premium',
-      'Banheiro': 'luxury bathroom interior design marble premium',
-      'Sala': 'contemporary luxury living room interior premium',
-      'Todos': 'luxury interior design home premium'
-    };
+// Types for API response structure maintained for compatibility
+export interface FreepikImage {
+  id: string;
+  title: string;
+  thumbnail: string;
+  source: {
+    url: string;
+  };
+  preview: {
+    url: string;
+  };
+}
 
-    const searchTerm = searchTerms[category] || `${category} interior design premium`;
-    const response = await searchFreepikImages(searchTerm, 1, 5);
-    
-    if (response.data && response.data.length > 0) {
-      // Return the preview URL of the first image
-      return response.data[0].preview.url;
-    }
-    
-    // If no results from API, use fallback
-    const fallbacks = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Todos'];
-    return fallbacks[0];
-  } catch (error) {
-    console.error('Error getting Freepik image by category:', error);
-    // Return fallback image
-    const fallbacks = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Todos'];
-    return fallbacks[0];
-  }
+export interface FreepikSearchResponse {
+  data: FreepikImage[];
+  meta: {
+    pagination: {
+      total: number;
+      count: number;
+      per_page: number;
+      current_page: number;
+      total_pages: number;
+    };
+  };
+}
+
+// Get a single image for a category
+export const getFreepikImageByCategory = async (category: string): Promise<string> => {
+  console.log(`Getting fallback image for category: ${category}`);
+  
+  // Return fallback image
+  const fallbacks = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Todos'];
+  return fallbacks[0];
 };
 
-// Function to get multiple premium images for a category
+// Get multiple images for a category
 export const getMultipleFreepikImagesByCategory = async (category: string, count = 4): Promise<string[]> => {
-  try {
-    const searchTerms: Record<string, string> = {
-      'Apartamento': 'modern luxury apartment interior design premium',
-      'Cozinha': 'luxury modern kitchen design interior premium',
-      'Comercial': 'elegant commercial office space interior premium',
-      'Banheiro': 'luxury bathroom interior design marble premium',
-      'Sala': 'contemporary luxury living room interior premium',
-      'Todos': 'luxury interior design home premium'
-    };
+  console.log(`Getting ${count} fallback images for category: ${category}`);
+  
+  // Return fallback images
+  const fallbacks = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Todos'];
+  const allFallbacks = [...fallbacks, ...FALLBACK_IMAGES['Todos']];
+  
+  // Return unique images up to count
+  return [...new Set(allFallbacks)].slice(0, count);
+};
 
-    const searchTerm = searchTerms[category] || `${category} interior design premium`;
-    const response = await searchFreepikImages(searchTerm, 1, count + 2); // Fetch a few extra in case some fail
+// Mock search function that returns fallback data
+export const searchFreepikImages = async (query: string, page = 1, limit = 20): Promise<FreepikSearchResponse> => {
+  console.log(`Mock search for: ${query} (using fallbacks only)`);
+  
+  // Create mock image objects from fallbacks
+  const mockImages: FreepikImage[] = Object.values(FALLBACK_IMAGES)
+    .flat()
+    .slice(0, limit)
+    .map((url, index) => ({
+      id: `fallback-${index}`,
+      title: `Fallback Image ${index + 1}`,
+      thumbnail: url,
+      source: { url },
+      preview: { url }
+    }));
     
-    if (response.data && response.data.length > 0) {
-      // Return up to 'count' preview URLs
-      return response.data.slice(0, count).map(img => img.preview.url);
+  return {
+    data: mockImages,
+    meta: {
+      pagination: {
+        total: mockImages.length,
+        count: mockImages.length,
+        per_page: limit,
+        current_page: page,
+        total_pages: 1
+      }
     }
-    
-    // If no results from API, use fallbacks
-    const fallbacks = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Todos'];
-    return [...fallbacks, ...FALLBACK_IMAGES['Todos']].slice(0, count);
-  } catch (error) {
-    console.error('Error getting multiple Freepik images by category:', error);
-    // Return fallback images
-    const fallbacks = FALLBACK_IMAGES[category] || FALLBACK_IMAGES['Todos'];
-    return [...fallbacks, ...FALLBACK_IMAGES['Todos']].slice(0, count);
-  }
+  };
 };

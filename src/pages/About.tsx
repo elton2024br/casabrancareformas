@@ -1,13 +1,10 @@
-
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import MainLayout from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const About = () => {
   return (
-    <>
-      <Header />
+    <MainLayout>
       <main className="pt-24 md:pt-28 pb-16">
         <section className="container px-4 md:px-6">
           <div className="max-w-4xl mx-auto">
@@ -107,8 +104,7 @@ const About = () => {
           </div>
         </section>
       </main>
-      <Footer />
-    </>
+    </MainLayout>
   );
 };
 

@@ -1,7 +1,5 @@
-
 import { useRef, useEffect } from "react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import MainLayout from "@/components/layout/MainLayout";
 import { HeroSection } from "@/components/home/HeroSection";
 import { AboutSection } from "@/components/home/AboutSection";
 import { ServicesSection } from "@/components/home/ServicesSection";
@@ -46,16 +44,14 @@ const Index = () => {
   };
 
   return (
-    <>
-      <Header />
+    <MainLayout>
       <HeroSection addToRefs={addToRefs} />
       <AboutSection addToRefs={addToRefs} />
       <ServicesSection addToRefs={addToRefs} />
       <ProjectsSection addToRefs={addToRefs} />
       <TestimonialsSection addToRefs={addToRefs} />
       <CtaSection addToRefs={addToRefs} />
-      <Footer />
-    </>
+    </MainLayout>
   );
 };
 

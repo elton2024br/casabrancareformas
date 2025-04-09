@@ -1,44 +1,60 @@
+/* Font imports */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-first base styles - aplicadas a todos os dispositivos */
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222 84% 4.9%;
-
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-
-    --primary: 221 83% 53%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 225 74% 47%;
     --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 97%;
-    --secondary-foreground: 222 47% 11.2%;
-
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 240 4% 46%;
-
+    --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
-
-    --radius: 0.75rem;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
 
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
       'Helvetica Neue', Arial, sans-serif;
     --font-serif: Georgia, Cambria, 'Times New Roman', Times, serif;
     --font-mono: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
   }
 
   * {
@@ -47,7 +63,232 @@
 
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-size: 16px; /* Base font size for mobile */
+    line-height: 1.5;
+  }
+  
+  h1 {
+    font-size: 1.75rem; /* 28px - Mobile */
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem; /* 24px - Mobile */
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem; /* 20px - Mobile */
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    margin-bottom: 1rem;
+  }
+  
+  /* Buttons and interactive elements for touch */
+  button, 
+  .btn, 
+  a.btn, 
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px; /* Recommended touch target size */
+    min-width: 44px; /* Recommended touch target size */
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Input fields for mobile forms */
+  input, 
+  select, 
+  textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Tablet breakpoint (min-width approach) */
+  @media (min-width: 640px) {
+    body {
+      font-size: 16px;
+    }
+    
+    h1 {
+      font-size: 2rem; /* 32px */
+    }
+    
+    h2 {
+      font-size: 1.75rem; /* 28px */
+    }
+    
+    h3 {
+      font-size: 1.5rem; /* 24px */
+    }
+  }
+  
+  /* Desktop breakpoint */
+  @media (min-width: 1024px) {
+    body {
+      font-size: 16px;
+    }
+    
+    h1 {
+      font-size: 2.5rem; /* 40px */
+    }
+    
+    h2 {
+      font-size: 2rem; /* 32px */
+    }
+    
+    h3 {
+      font-size: 1.75rem; /* 28px */
+    }
+  }
+}
+
+/* Core styles - use mobile-first approach */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-size: 16px; /* Base font size for mobile */
+    line-height: 1.5;
+  }
+  
+  h1 {
+    font-size: 1.75rem; /* 28px - Mobile */
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem; /* 24px - Mobile */
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem; /* 20px - Mobile */
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    margin-bottom: 1rem;
+  }
+  
+  /* Buttons and interactive elements for touch */
+  button, 
+  .btn, 
+  a.btn, 
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px; /* Recommended touch target size */
+    min-width: 44px; /* Recommended touch target size */
+    padding: 0.5rem 1rem;
+  }
+  
+  /* Input fields for mobile forms */
+  input, 
+  select, 
+  textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Tablet breakpoint (min-width approach) */
+  @media (min-width: 640px) {
+    body {
+      font-size: 16px;
+    }
+    
+    h1 {
+      font-size: 2rem; /* 32px */
+    }
+    
+    h2 {
+      font-size: 1.75rem; /* 28px */
+    }
+    
+    h3 {
+      font-size: 1.5rem; /* 24px */
+    }
+  }
+  
+  /* Desktop breakpoint */
+  @media (min-width: 1024px) {
+    body {
+      font-size: 16px;
+    }
+    
+    h1 {
+      font-size: 2.5rem; /* 40px */
+    }
+    
+    h2 {
+      font-size: 2rem; /* 32px */
+    }
+    
+    h3 {
+      font-size: 1.75rem; /* 28px */
+    }
+  }
+}
+
+/* Mobile-first layout utilities */
+@layer components {
+  .container {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin: 0 auto;
+  }
+  
+  @media (min-width: 640px) {
+    .container {
+      max-width: 640px;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .container {
+      max-width: 768px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1024px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1280px;
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.7s ease-in-out forwards;
+  }
+}
+
+/* Keyframes e animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -94,6 +335,3 @@
     scrollbar-width: none;
   }
 }
-
-/* Font imports */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');

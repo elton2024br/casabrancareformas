@@ -1,7 +1,8 @@
-
 import { useEffect, useState } from "react";
-import { BarChart, LayoutDashboard, Users, FolderOpen, MessageSquare } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { BarChart, LayoutDashboard, Users, FolderOpen, MessageSquare, Building, FileText, Book } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 const statsCards = [
   {
@@ -44,138 +45,146 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Bem-vindo ao painel administrativo da Casa Branca Reformas
-          </p>
-        </div>
-        <div className="mt-4 md:mt-0 text-sm text-muted-foreground">
-          {date.toLocaleDateString("pt-BR", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}{" "}
-          | {date.toLocaleTimeString("pt-BR")}
-        </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {statsCards.map((card) => (
-          <Card key={card.title} className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">{card.title}</CardTitle>
-              {card.icon}
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{card.value}</div>
-              <p className="text-xs text-muted-foreground">{card.description}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
+    <div className="container py-10">
+      <h1 className="text-3xl font-bold mb-8">Painel Administrativo</h1>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Portfolio Card */}
         <Card>
-          <CardHeader>
-            <CardTitle>Atividades Recentes</CardTitle>
-            <CardDescription>Últimas ações realizadas no sistema</CardDescription>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center text-xl">
+              <Building className="mr-2 h-5 w-5" />
+              Portfólio
+            </CardTitle>
+            <CardDescription>
+              Gerencie os projetos no portfólio
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {[
-                {
-                  action: "Novo projeto adicionado",
-                  details: "Residência Moderna",
-                  time: "2 horas atrás",
-                },
-                {
-                  action: "Novo depoimento aprovado",
-                  details: "De Roberto Almeida",
-                  time: "5 horas atrás",
-                },
-                {
-                  action: "Nova mensagem de contato",
-                  details: "De Maria Silva",
-                  time: "1 dia atrás",
-                },
-                {
-                  action: "Projeto atualizado",
-                  details: "Cozinha Escandinava",
-                  time: "2 dias atrás",
-                },
-              ].map((activity, index) => (
-                <div key={index} className="flex items-start space-x-4">
-                  <div className="mt-1 bg-primary/10 rounded-full p-1">
-                    <LayoutDashboard className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium">{activity.action}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {activity.details}
-                    </p>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {activity.time}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Adicione, remova ou edite projetos de reforma que aparecem no portfólio do site.
+            </p>
           </CardContent>
+          <CardFooter>
+            <Button asChild className="w-full">
+              <Link to="/admin/portfolio">Gerenciar Portfólio</Link>
+            </Button>
+          </CardFooter>
         </Card>
-
+        
+        {/* Depoimentos Card */}
         <Card>
-          <CardHeader>
-            <CardTitle>Tarefas Pendentes</CardTitle>
-            <CardDescription>Itens que precisam de atenção</CardDescription>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center text-xl">
+              <Users className="mr-2 h-5 w-5" />
+              Depoimentos
+            </CardTitle>
+            <CardDescription>
+              Gerencie depoimentos de clientes
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {[
-                {
-                  task: "Responder mensagens de contato",
-                  count: 5,
-                  priority: "alta",
-                },
-                {
-                  task: "Aprovar novos depoimentos",
-                  count: 3,
-                  priority: "média",
-                },
-                {
-                  task: "Atualizar projeto do portfólio",
-                  count: 2,
-                  priority: "baixa",
-                },
-                {
-                  task: "Revisar conteúdo do site",
-                  count: 1,
-                  priority: "média",
-                },
-              ].map((task, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div
-                      className={`h-2 w-2 rounded-full ${
-                        task.priority === "alta"
-                          ? "bg-destructive"
-                          : task.priority === "média"
-                          ? "bg-yellow-500"
-                          : "bg-green-500"
-                      }`}
-                    ></div>
-                    <span className="text-sm">{task.task}</span>
-                  </div>
-                  <div className="flex items-center justify-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium">
-                    {task.count}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Adicione, remova ou edite depoimentos de clientes que aparecem na seção de testimoniais.
+            </p>
           </CardContent>
+          <CardFooter>
+            <Button asChild className="w-full">
+              <Link to="/admin/depoimentos">Gerenciar Depoimentos</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        {/* Conteúdo Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center text-xl">
+              <FileText className="mr-2 h-5 w-5" />
+              Conteúdo
+            </CardTitle>
+            <CardDescription>
+              Edite o conteúdo do site
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Atualize textos, imagens e informações que aparecem nas páginas principais do site.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild className="w-full">
+              <Link to="/admin/conteudo">Editar Conteúdo</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        {/* Blog Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center text-xl">
+              <Book className="mr-2 h-5 w-5" />
+              Blog
+            </CardTitle>
+            <CardDescription>
+              Gerencie o conteúdo do blog
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Crie, edite e publique artigos no blog, aproveitando o gerador de conteúdo com IA integrado.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild className="w-full">
+              <Link to="/admin/blog">Gerenciar Blog</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        {/* Mensagens Card */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center text-xl">
+              <MessageSquare className="mr-2 h-5 w-5" />
+              Mensagens
+            </CardTitle>
+            <CardDescription>
+              Visualize mensagens de contato
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Acesse as mensagens enviadas por clientes através do formulário de contato.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button asChild className="w-full">
+              <Link to="/admin/contatos">Ver Mensagens</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+        
+        {/* Analytics Placeholder */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center text-xl">
+              <BarChart className="mr-2 h-5 w-5" />
+              Analytics
+            </CardTitle>
+            <CardDescription>
+              Estatísticas do site
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Visualize estatísticas de visitantes, páginas mais acessadas e conversões.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button variant="outline" className="w-full" disabled>
+              Em breve
+            </Button>
+          </CardFooter>
         </Card>
       </div>
     </div>

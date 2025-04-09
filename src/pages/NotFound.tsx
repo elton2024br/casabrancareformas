@@ -1,36 +1,34 @@
-
-import { useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import MainLayout from "@/components/layout/MainLayout";
+import { SeoMeta } from "@/components/ui/seo-meta";
 import { Button } from "@/components/ui/button";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import { ArrowLeft } from "lucide-react";
 
 const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
   return (
     <>
-      <Header />
-      <div className="min-h-[80vh] flex items-center justify-center bg-secondary">
-        <div className="text-center px-4 animate-fade-in">
-          <h1 className="text-7xl font-bold mb-6">404</h1>
-          <p className="text-2xl font-medium mb-6">Página não encontrada</p>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            A página que você está procurando não existe ou foi removida.
-          </p>
-          <Button asChild size="lg">
-            <Link to="/">Voltar para a Página Inicial</Link>
-          </Button>
-        </div>
-      </div>
-      <Footer />
+      <SeoMeta 
+        title="Página Não Encontrada | Casa Branca Reformas"
+        description="A página que você está procurando não existe ou foi movida."
+      />
+      
+      <MainLayout>
+        <section className="flex flex-col items-center justify-center min-h-[80vh] py-16 px-4">
+          <div className="text-center max-w-md mx-auto">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">404</h1>
+            <h2 className="text-2xl md:text-3xl font-serif font-medium mb-6">Página não encontrada</h2>
+            <p className="text-muted-foreground mb-8">
+              A página que você está procurando pode ter sido removida, teve seu nome alterado ou está temporariamente indisponível.
+            </p>
+            <Button asChild>
+              <Link to="/" className="inline-flex items-center">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Voltar para o início
+              </Link>
+            </Button>
+          </div>
+        </section>
+      </MainLayout>
     </>
   );
 };

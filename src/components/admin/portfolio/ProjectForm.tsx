@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,24 +5,31 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Image, Video } from "lucide-react";
+import { Upload, Image, Video, Instagram } from "lucide-react";
 import { type Project } from "@/components/ui/project-card";
 import { type ProjectFormProps } from "./formTypes";
 import { ImageUploader } from "./ImageUploader";
 import { FreepikTab } from "./FreepikTab";
 import { VideoUploader } from "./VideoUploader";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { isInstagramVideoUrl } from "@/lib/utils";
 
 export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectFormProps) {
   const [formData, setFormData] = useState<Project>(project);
   const [isUploading, setIsUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [isVideo, setIsVideo] = useState<boolean>(project.isVideo || false);
+  const [isInstagram, setIsInstagram] = useState(
+    !!(project.videoUrl && isInstagramVideoUrl(project.videoUrl))
+  );
 
   // Atualizar o estado local quando o projeto mudar (ex: quando editar um projeto)
   useEffect(() => {
     setFormData(project);
     setIsVideo(project.isVideo || false);
+    setIsInstagram(!!(project.videoUrl && isInstagramVideoUrl(project.videoUrl)));
   }, [project]);
 
   const handleChange = (
@@ -31,6 +37,11 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Se estiver alterando o videoUrl, verificar se é URL do Instagram
+    if (name === "videoUrl" && typeof value === "string") {
+      setIsInstagram(isInstagramVideoUrl(value));
+    }
   };
 
   const handleImageSelect = (imageUrl: string) => {
@@ -199,6 +210,15 @@ export function ProjectForm({ project, isAddMode, onSubmit, onCancel }: ProjectF
               </Tabs>
             </div>
           )}
+          
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="isInstagram"
+              checked={isInstagram}
+              onCheckedChange={(checked) => setIsInstagram(!!checked)}
+            />
+            <Label htmlFor="isInstagram">Este vídeo é do Instagram</Label>
+          </div>
           
           <div className="flex justify-end space-x-4">
             <Button type="button" variant="outline" onClick={onCancel}>

@@ -1,8 +1,6 @@
-
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import MainLayout from "@/components/layout/MainLayout";
 import { type Project } from "@/components/ui/project-card";
 import { getFreepikImageByCategory, getMultipleFreepikImagesByCategory } from "@/services/freepikService";
 
@@ -17,9 +15,16 @@ import { ProjectNavigation } from "@/components/portfolio/ProjectNavigation";
 import { ProjectSeo } from "@/components/portfolio/ProjectSeo";
 import { NotFoundProject } from "@/components/portfolio/NotFoundProject";
 import { toast } from "sonner";
+import { ArrowLeft, Play, Calendar, Tag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { InstagramEmbed } from "@/components/ui/instagram-embed";
+import { isInstagramVideoUrl } from "@/lib/utils";
 
 // Mock data for portfolio projects
-const portfolioProjects: Project[] = [
+const portfolioProjects = [
   {
     id: "1",
     title: "Residência Moderna",
@@ -74,12 +79,14 @@ interface GalleryItem {
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [prevProject, setPrevProject] = useState<Project | null>(null);
   const [nextProject, setNextProject] = useState<Project | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Find the current project
@@ -191,22 +198,26 @@ const ProjectDetail = () => {
   if (loading) {
     return (
       <>
-        <Header />
-        <main className="pt-24 pb-16">
-          <div className="container px-4 md:px-6 mx-auto">
-            <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            </div>
+        <ProjectSeo project={project} />
+        <MainLayout>
+          <div className="flex items-center justify-center h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
-        </main>
-        <Footer />
+        </MainLayout>
       </>
     );
   }
 
-  if (!project) {
-    return <NotFoundProject />;
+  if (error || !project) {
+    return (
+      <>
+        <NotFoundProject />
+      </>
+    );
   }
+
+  const isMainContentVideo = project.isVideo && project.videoUrl;
+  const isInstagramVideo = isMainContentVideo && isInstagramVideoUrl(project.videoUrl!);
 
   // Use premium image if available, otherwise fallback to original
   const displayImage = project.premiumImage || project.imageUrl;
@@ -214,50 +225,133 @@ const ProjectDetail = () => {
   return (
     <>
       <ProjectSeo project={project} />
-      <Header />
-      
-      <main className="pt-24 pb-16">
-        <div className="container px-4 md:px-6 mx-auto">
-          <ProjectBreadcrumb title={project.title} />
-          <ProjectHeader 
-            title={project.title} 
-            category={project.category} 
-            description={project.description} 
-          />
+      <MainLayout>
+        <ProjectBreadcrumb title={project.title} />
+        <ProjectHeader 
+          title={project.title} 
+          category={project.category} 
+          description={project.description} 
+        />
+        
+        <div className="container px-4 mx-auto pt-24 md:pt-32 pb-16 md:pb-24">
+          <div className="mb-6 flex items-center justify-between">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </Button>
+            
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Tag className="h-3 w-3" />
+                {project.category}
+              </Badge>
+              {project.isVideo && (
+                <Badge variant="outline" className="flex items-center gap-1 text-primary">
+                  <Play className="h-3 w-3" />
+                  Vídeo
+                </Badge>
+              )}
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {new Date().toLocaleDateString()}
+              </Badge>
+            </div>
+          </div>
           
-          {project.isVideo && project.videoUrl ? (
-            <div className="mb-12 aspect-video rounded-lg overflow-hidden shadow-lg">
-              <video 
-                src={project.videoUrl}
-                poster={displayImage}
-                controls
-                className="w-full h-full"
-              />
+          <h1 className="text-3xl md:text-4xl font-bold mb-4">{project.title}</h1>
+          
+          {isMainContentVideo ? (
+            <div className="mb-8">
+              {isInstagramVideo ? (
+                <InstagramEmbed 
+                  url={project.videoUrl!} 
+                  className="w-full max-w-3xl mx-auto" 
+                  aspectRatio="auto"
+                  showCaption={true}
+                />
+              ) : (
+                <div className="aspect-video rounded-lg overflow-hidden bg-muted">
+                  <video 
+                    src={project.videoUrl} 
+                    controls 
+                    autoPlay
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
             </div>
           ) : (
-            <ProjectMainImage 
-              imageUrl={displayImage} 
-              title={project.title}
-              altText={project.altText}
-              onImageSelect={setSelectedImage}
-              galleryImages={galleryItems.slice(1).map(item => item.url)}
-            />
+            <Dialog>
+              <DialogTrigger asChild>
+                <div className="mb-8 aspect-video relative rounded-lg overflow-hidden cursor-pointer group">
+                  <img 
+                    src={project.imageUrl}
+                    alt={project.altText || project.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <div className="bg-primary/80 rounded-full p-4">
+                      <Play className="h-8 w-8 text-white" />
+                    </div>
+                  </div>
+                </div>
+              </DialogTrigger>
+              <DialogContent className="max-w-5xl p-1 bg-transparent border-none">
+                <img 
+                  src={project.imageUrl}
+                  alt={project.altText || project.title}
+                  className="w-full h-auto"
+                />
+              </DialogContent>
+            </Dialog>
           )}
           
-          <ProjectGallery items={galleryItems} title={project.title} />
-          <ProjectDescription />
-          <RelatedProjects 
-            projects={portfolioProjects} 
-            currentProjectId={project.id} 
-          />
-          <ProjectNavigation 
-            prevProject={prevProject} 
-            nextProject={nextProject} 
+          <div className="max-w-prose mb-12">
+            <p className="text-lg text-muted-foreground whitespace-pre-line">
+              {project.description}
+            </p>
+          </div>
+          
+          <Separator className="my-8" />
+          
+          <ProjectGallery
+            items={[
+              {
+                url: project.imageUrl,
+                isVideo: false
+              },
+              ...(project.videoUrl ? [{
+                url: project.videoUrl,
+                isVideo: true
+              }] : []),
+              {
+                url: "https://images.unsplash.com/photo-1589834390005-5d4fb9bf3d32?q=80&w=1887",
+                isVideo: false
+              },
+              {
+                url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2053",
+                isVideo: false
+              }
+            ]}
+            title={project.title}
           />
         </div>
-      </main>
-
-      <Footer />
+        
+        <ProjectDescription />
+        <RelatedProjects 
+          projects={portfolioProjects} 
+          currentProjectId={project.id} 
+        />
+        <ProjectNavigation 
+          prevProject={prevProject} 
+          nextProject={nextProject} 
+        />
+      </MainLayout>
     </>
   );
 };

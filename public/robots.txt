@@ -1,7 +1,39 @@
-
-# Allow all web crawlers
+# Configurações para todos os crawlers
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /404
+Disallow: /*.json$
+Disallow: /_h5ai/
+Disallow: /*?*
 
-# Sitemap location
+# Configurações para Google
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /*.json$
+
+# Configurações para Google Imagens
+User-agent: Googlebot-Image
+Allow: /public/
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.webp$
+Allow: /*.svg$
+
+# Configurações para Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+
+# Configurações para Facebook
+User-agent: facebookexternalhit
+Allow: /
+
+# Crawl delay para evitar sobrecarga do servidor
+Crawl-delay: 1
+
+# Sitemap
 Sitemap: https://www.casabrancareformas.com.br/sitemap.xml
