@@ -1,11 +1,13 @@
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import { Buffer } from 'buffer'
 
 // Adicionar polyfill para Buffer para ambientes de navegador
 window.global = window;
-window.Buffer = window.Buffer || require('buffer').Buffer;
+window.Buffer = window.Buffer || Buffer;
 
 // Registro do Service Worker para funcionalidades offline e melhor performance
 const registerServiceWorker = async () => {
