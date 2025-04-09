@@ -3,63 +3,9 @@
 // Isso melhora a experiência do usuário ao navegar pelo site
 
 /**
- * Tipos para o requestIdleCallback que pode não estar disponível em todos os navegadores
+ * Verificamos se estamos em um ambiente com window para evitar erros durante SSR
  */
-type RequestIdleCallbackHandle = number;
-
-interface RequestIdleCallbackOptions {
-  timeout?: number;
-}
-
-interface RequestIdleCallbackDeadline {
-  didTimeout: boolean;
-  timeRemaining: () => number;
-}
-
-// Expandimos a interface Window apenas se a propriedade não existir nativamente
-declare global {
-  interface Window {
-    requestIdleCallback?: (
-      callback: (deadline: RequestIdleCallbackDeadline) => void,
-      opts?: RequestIdleCallbackOptions
-    ) => RequestIdleCallbackHandle;
-    cancelIdleCallback?: (handle: RequestIdleCallbackHandle) => void;
-  }
-}
-
-/**
- * Polyfill para requestIdleCallback para navegadores que não oferecem suporte nativo
- */
-const requestIdleCallbackPolyfill = (
-  callback: (deadline: RequestIdleCallbackDeadline) => void,
-  options?: RequestIdleCallbackOptions
-): RequestIdleCallbackHandle => {
-  const start = Date.now();
-  return window.setTimeout(() => {
-    callback({
-      didTimeout: false,
-      timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
-    });
-  }, options?.timeout || 1);
-};
-
-/**
- * Polyfill para cancelIdleCallback
- */
-const cancelIdleCallbackPolyfill = (handle: RequestIdleCallbackHandle): void => {
-  window.clearTimeout(handle);
-};
-
-// Use o nativo se disponível, caso contrário, use o polyfill
-const requestIdleCallback = 
-  typeof window !== 'undefined' 
-    ? window.requestIdleCallback || requestIdleCallbackPolyfill
-    : requestIdleCallbackPolyfill;
-
-const cancelIdleCallback = 
-  typeof window !== 'undefined'
-    ? window.cancelIdleCallback || cancelIdleCallbackPolyfill
-    : cancelIdleCallbackPolyfill;
+const isClient = typeof window !== 'undefined';
 
 /**
  * Componentes a serem pré-carregados
@@ -72,18 +18,58 @@ const COMPONENTS_TO_PREFETCH = [
 ];
 
 /**
+ * Implementação de polyfill para requestIdleCallback
+ */
+const requestIdleCallbackPolyfill = (
+  callback: IdleRequestCallback,
+  options?: IdleRequestOptions
+): number => {
+  const start = Date.now();
+  return window.setTimeout(() => {
+    callback({
+      didTimeout: false,
+      timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
+    });
+  }, options?.timeout || 1);
+};
+
+/**
+ * Função segura que usa a API nativa quando disponível ou o polyfill quando necessário
+ */
+const safeRequestIdleCallback = (
+  callback: IdleRequestCallback,
+  options?: IdleRequestOptions
+): number => {
+  if (!isClient) return 0;
+  
+  return (window.requestIdleCallback || requestIdleCallbackPolyfill)(
+    callback,
+    options
+  );
+};
+
+/**
+ * Função segura para cancelamento que usa a API nativa quando disponível
+ */
+const safeCancelIdleCallback = (handle: number): void => {
+  if (!isClient) return;
+  
+  (window.cancelIdleCallback || window.clearTimeout)(handle);
+};
+
+/**
  * Pré-carrega os componentes em segundo plano
  */
 export const prefetchComponents = (): void => {
-  // Se o navegador não suporta ou está desabilitado, não faz nada
-  if (!requestIdleCallback) return;
+  // Se não estamos no cliente, saímos imediatamente
+  if (!isClient) return;
 
   // Pré-carregamento em segundo plano quando o navegador estiver ocioso
-  requestIdleCallback(
+  safeRequestIdleCallback(
     (deadline) => {
       // Se temos pouco tempo disponível, adiamos para o próximo período de inatividade
       if (deadline.timeRemaining() < 10) {
-        requestIdleCallback(prefetchHandler);
+        safeRequestIdleCallback(prefetchHandler);
         return;
       }
 
@@ -98,7 +84,7 @@ export const prefetchComponents = (): void => {
  */
 const prefetchHandler = (): void => {
   // Não funciona no SSR
-  if (typeof document === "undefined") return;
+  if (!isClient) return;
 
   // Cria um link para cada componente
   COMPONENTS_TO_PREFETCH.forEach((componentPath) => {
