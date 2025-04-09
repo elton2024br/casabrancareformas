@@ -4,9 +4,6 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { compression } from 'vite-plugin-compression2'
 
-// Importar Buffer para polyfill
-import { Buffer } from 'buffer';
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -37,10 +34,12 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Adicionar configuração de `define` para polyfills
+  // Corrigindo a configuração de `define` para o problema do Buffer
   define: {
-    'global': {}, // Polyfill para 'global' necessário por algumas libs
-    'Buffer': Buffer, // Polyfill para 'Buffer'
+    'global': 'globalThis',
+    // Buffer precisa ser definido como string para o esbuild
+    'Buffer': 'globalThis.Buffer',
+    'process.env': process.env
   },
   build: {
     // Otimização de build
