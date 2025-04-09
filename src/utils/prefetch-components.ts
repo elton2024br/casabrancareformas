@@ -3,8 +3,10 @@
 // Isso melhora a experiência do usuário ao navegar pelo site
 
 /**
- * Tipos para o requestIdleCallback que não está definido nativamente em todos os navegadores
+ * Tipos para o requestIdleCallback que pode não estar disponível em todos os navegadores
  */
+type RequestIdleCallbackHandle = number;
+
 interface RequestIdleCallbackOptions {
   timeout?: number;
 }
@@ -14,15 +16,14 @@ interface RequestIdleCallbackDeadline {
   timeRemaining: () => number;
 }
 
-// TypeScript não possui tipos nativos para requestIdleCallback em alguns ambientes
-// Declaramos o tipo globalmente apenas se não existir
+// Expandimos a interface Window apenas se a propriedade não existir nativamente
 declare global {
   interface Window {
     requestIdleCallback?: (
       callback: (deadline: RequestIdleCallbackDeadline) => void,
       opts?: RequestIdleCallbackOptions
-    ) => number;
-    cancelIdleCallback?: (handle: number) => void;
+    ) => RequestIdleCallbackHandle;
+    cancelIdleCallback?: (handle: RequestIdleCallbackHandle) => void;
   }
 }
 
@@ -32,7 +33,7 @@ declare global {
 const requestIdleCallbackPolyfill = (
   callback: (deadline: RequestIdleCallbackDeadline) => void,
   options?: RequestIdleCallbackOptions
-): number => {
+): RequestIdleCallbackHandle => {
   const start = Date.now();
   return window.setTimeout(() => {
     callback({
@@ -45,13 +46,20 @@ const requestIdleCallbackPolyfill = (
 /**
  * Polyfill para cancelIdleCallback
  */
-const cancelIdleCallbackPolyfill = (handle: number): void => {
+const cancelIdleCallbackPolyfill = (handle: RequestIdleCallbackHandle): void => {
   window.clearTimeout(handle);
 };
 
 // Use o nativo se disponível, caso contrário, use o polyfill
-const requestIdleCallback = window.requestIdleCallback || requestIdleCallbackPolyfill;
-const cancelIdleCallback = window.cancelIdleCallback || cancelIdleCallbackPolyfill;
+const requestIdleCallback = 
+  typeof window !== 'undefined' 
+    ? window.requestIdleCallback || requestIdleCallbackPolyfill
+    : requestIdleCallbackPolyfill;
+
+const cancelIdleCallback = 
+  typeof window !== 'undefined'
+    ? window.cancelIdleCallback || cancelIdleCallbackPolyfill
+    : cancelIdleCallbackPolyfill;
 
 /**
  * Componentes a serem pré-carregados
