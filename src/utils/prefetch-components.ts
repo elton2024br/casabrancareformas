@@ -17,12 +17,31 @@ const COMPONENTS_TO_PREFETCH = [
   "./pages/Depoimentos.tsx"
 ];
 
+// Interfaces para o polyfill do requestIdleCallback
+interface RequestIdleCallbackDeadline {
+  timeRemaining: () => number;
+  didTimeout: boolean;
+}
+
+interface RequestIdleCallbackOptions {
+  timeout?: number;
+}
+
+// Declare as funções apenas se não estiverem no tipo global
+// Isso evita conflitos com tipos nativos do TypeScript
+type RequestIdleCallbackFn = (
+  callback: (deadline: RequestIdleCallbackDeadline) => void,
+  options?: RequestIdleCallbackOptions
+) => number;
+
+type CancelIdleCallbackFn = (handle: number) => void;
+
 /**
  * Implementação de polyfill para requestIdleCallback
  */
 const requestIdleCallbackPolyfill = (
-  callback: IdleRequestCallback,
-  options?: IdleRequestOptions
+  callback: (deadline: RequestIdleCallbackDeadline) => void,
+  options?: RequestIdleCallbackOptions
 ): number => {
   const start = Date.now();
   return window.setTimeout(() => {
@@ -37,15 +56,14 @@ const requestIdleCallbackPolyfill = (
  * Função segura que usa a API nativa quando disponível ou o polyfill quando necessário
  */
 const safeRequestIdleCallback = (
-  callback: IdleRequestCallback,
-  options?: IdleRequestOptions
+  callback: (deadline: RequestIdleCallbackDeadline) => void,
+  options?: RequestIdleCallbackOptions
 ): number => {
   if (!isClient) return 0;
   
-  return (window.requestIdleCallback || requestIdleCallbackPolyfill)(
-    callback,
-    options
-  );
+  // Use a definição nativa se disponível, caso contrário use o polyfill
+  const rIC = (window as any).requestIdleCallback || requestIdleCallbackPolyfill;
+  return rIC(callback, options);
 };
 
 /**
@@ -54,7 +72,8 @@ const safeRequestIdleCallback = (
 const safeCancelIdleCallback = (handle: number): void => {
   if (!isClient) return;
   
-  (window.cancelIdleCallback || window.clearTimeout)(handle);
+  const cIC = (window as any).cancelIdleCallback || window.clearTimeout;
+  cIC(handle);
 };
 
 /**
