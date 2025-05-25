@@ -1771,7 +1771,7 @@ export type Database = {
       plpgsql_show_dependency_tb: {
         Args:
           | {
-              funcoid: unknown
+              fnname: string
               relid?: unknown
               anyelememttype?: unknown
               anyenumtype?: unknown
@@ -1780,7 +1780,7 @@ export type Database = {
               anycompatiblerangetype?: unknown
             }
           | {
-              fnname: string
+              funcoid: unknown
               relid?: unknown
               anyelememttype?: unknown
               anyenumtype?: unknown
