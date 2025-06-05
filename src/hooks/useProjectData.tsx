@@ -75,6 +75,12 @@ export const useProjectData = (id: string | undefined): UseProjectDataReturn => 
 
   useEffect(() => {
     const fetchProjectData = async () => {
+      if (!id) {
+        setLoading(false);
+        setError("ID do projeto não fornecido");
+        return;
+      }
+
       const currentIndex = portfolioProjects.findIndex(project => project.id === id);
       setLoading(true);
       
@@ -160,12 +166,11 @@ export const useProjectData = (id: string | undefined): UseProjectDataReturn => 
         setNextProject(portfolioProjects[nextIndex]);
       } else {
         setLoading(false);
+        setError("Projeto não encontrado");
       }
     };
 
-    if (id) {
-      fetchProjectData();
-    }
+    fetchProjectData();
   }, [id]);
 
   return {

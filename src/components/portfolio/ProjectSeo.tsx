@@ -3,10 +3,15 @@ import { SeoMeta } from "@/components/ui/seo-meta";
 import { type Project } from "@/components/ui/project-card";
 
 interface ProjectSeoProps {
-  project: Project;
+  project: Project | null;
 }
 
 export function ProjectSeo({ project }: ProjectSeoProps) {
+  // Não renderizar se o projeto não estiver carregado
+  if (!project) {
+    return null;
+  }
+
   const title = `${project.title} | Casa Branca Reformas`;
   const description = project.description;
   const keywords = project.keywords?.join(", ") || `${project.category}, reforma, design de interiores, casa branca`;
