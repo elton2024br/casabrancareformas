@@ -65,16 +65,20 @@ const Header = () => {
   // Fechar menu quando toca fora
   useEffect(() => {
     if (!isMenuOpen) return;
-    
-    const handleClickOutside = (e: MouseEvent) => {
+
+    const handleClickOutside = (e: Event) => {
       const target = e.target as HTMLElement;
       if (isMenuOpen && !target.closest('[data-mobile-menu]') && !target.closest('[data-mobile-trigger]')) {
         setIsMenuOpen(false);
       }
     };
-    
+
     document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, [isMenuOpen]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
