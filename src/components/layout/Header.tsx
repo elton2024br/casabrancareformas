@@ -6,24 +6,10 @@ import DesktopNavigation from './navigation/DesktopNavigation';
 import MobileMenu from './navigation/MobileMenu';
 import MobileMenuTrigger from './navigation/MobileMenuTrigger';
 
-// Estilos CSS específicos para mobile
-const mobileStyles = `
-  @media (hover: none) {
-    .tap-highlight-transparent {
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    .touch-manipulation {
-      touch-action: manipulation;
-    }
-  }
-`;
-
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
-  const [isTouch, setIsTouch] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,56 +20,65 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Fechar menu ao navegar para outra rota
+  // Fechar menu quando navegar ou pressionar ESC
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
     const handleRouteChange = () => {
       if (isMenuOpen) {
         setIsMenuOpen(false);
       }
     };
 
-    window.addEventListener('popstate', handleRouteChange);
-    return () => window.removeEventListener('popstate', handleRouteChange);
+    if (isMenuOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      window.addEventListener('popstate', handleRouteChange);
+      // Prevenir scroll do body quando menu estiver aberto
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('popstate', handleRouteChange);
+      document.body.style.overflow = '';
+    };
   }, [isMenuOpen]);
 
-  // Injetar estilos CSS mobile no head
-  useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = mobileStyles;
-    document.head.appendChild(styleElement);
-    
-    return () => {
-      document.head.removeChild(styleElement);
-    };
-  }, []);
-
-  // Verificar se é dispositivo touch
-  useEffect(() => {
-    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  }, []);
-
-  // Fechar menu quando toca fora
+  // Fechar menu quando clicar fora (simplificado)
   useEffect(() => {
     if (!isMenuOpen) return;
 
-    const handleClickOutside = (e: Event) => {
+    const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (isMenuOpen && !target.closest('[data-mobile-menu]') && !target.closest('[data-mobile-trigger]')) {
+      if (!target.closest('[data-mobile-menu]') && !target.closest('[data-mobile-trigger]')) {
         setIsMenuOpen(false);
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
+    // Pequeno delay para evitar fechar imediatamente após abrir
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 100);
+
     return () => {
+      clearTimeout(timeoutId);
       document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
     };
   }, [isMenuOpen]);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => {
+    setIsMenuOpen(prev => !prev);
+  };
 
-  const handleCloseMenu = () => setIsMenuOpen(false);
+  const handleCloseMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   const handleItemHover = (path: string) => {
     setActiveItem(path);
@@ -115,7 +110,7 @@ const Header = () => {
           activeItem={activeItem}
           onItemHover={handleItemHover}
           onItemLeave={handleItemLeave}
-          isTouch={isTouch}
+          isTouch={false}
         />
 
         <MobileMenuTrigger 

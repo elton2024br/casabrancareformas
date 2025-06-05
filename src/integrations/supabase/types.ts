@@ -789,7 +789,7 @@ export type Database = {
           price: number
           provider_id: string
           request_id: string
-          status: "PENDING" | "SUCCESS" | "ERROR" | null
+          status: Database["public"]["Enums"]["request_status"] | null
           timeframe: string
           updated_at: string
         }
@@ -800,7 +800,7 @@ export type Database = {
           price: number
           provider_id: string
           request_id: string
-          status?: "PENDING" | "SUCCESS" | "ERROR" | null
+          status?: Database["public"]["Enums"]["request_status"] | null
           timeframe: string
           updated_at?: string
         }
@@ -811,7 +811,7 @@ export type Database = {
           price?: number
           provider_id?: string
           request_id?: string
-          status?: "PENDING" | "SUCCESS" | "ERROR" | null
+          status?: Database["public"]["Enums"]["request_status"] | null
           timeframe?: string
           updated_at?: string
         }
@@ -1060,7 +1060,7 @@ export type Database = {
           id: string
           images: string[] | null
           location: string
-          status: "PENDING" | "SUCCESS" | "ERROR" | null
+          status: Database["public"]["Enums"]["request_status"] | null
           title: string
           updated_at: string
         }
@@ -1074,7 +1074,7 @@ export type Database = {
           id?: string
           images?: string[] | null
           location: string
-          status?: "PENDING" | "SUCCESS" | "ERROR" | null
+          status?: Database["public"]["Enums"]["request_status"] | null
           title: string
           updated_at?: string
         }
@@ -1088,7 +1088,7 @@ export type Database = {
           id?: string
           images?: string[] | null
           location?: string
-          status?: "PENDING" | "SUCCESS" | "ERROR" | null
+          status?: Database["public"]["Enums"]["request_status"] | null
           title?: string
           updated_at?: string
         }
