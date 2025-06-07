@@ -1,9 +1,9 @@
+
 import { useRef, useEffect } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { HeroSection } from "@/components/home/HeroSection";
 import { AboutSection } from "@/components/home/AboutSection";
 import { ServicesSection } from "@/components/home/ServicesSection";
-import { ProjectsSection } from "@/components/home/ProjectsSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { CtaSection } from "@/components/home/CtaSection";
 
@@ -48,7 +48,6 @@ const Index = () => {
       <HeroSection addToRefs={addToRefs} />
       <AboutSection addToRefs={addToRefs} />
       <ServicesSection addToRefs={addToRefs} />
-      <ProjectsSection addToRefs={addToRefs} />
       <TestimonialsSection addToRefs={addToRefs} />
       <CtaSection addToRefs={addToRefs} />
     </MainLayout>
