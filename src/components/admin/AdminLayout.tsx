@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [adminUsername, setAdminUsername] = useState<string | null>(null);
   
   useEffect(() => {
     // Check if admin is authenticated
@@ -17,9 +17,9 @@ const AdminLayout = () => {
       return;
     }
     
-    // Get admin email
-    const email = localStorage.getItem("adminEmail");
-    setAdminEmail(email);
+    // Get admin username
+    const username = localStorage.getItem("adminUsername");
+    setAdminUsername(username);
     
     // Check for session timeout (optional - 2 hours)
     const loginTime = localStorage.getItem("adminLoginTime");
@@ -36,7 +36,7 @@ const AdminLayout = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("adminAuthenticated");
-    localStorage.removeItem("adminEmail");
+    localStorage.removeItem("adminUsername");
     localStorage.removeItem("adminLoginTime");
     navigate("/admin");
     toast.success("Logout realizado com sucesso");
@@ -78,12 +78,12 @@ const AdminLayout = () => {
         </nav>
         
         <div className="p-4 border-t">
-          {adminEmail && (
+          {adminUsername && (
             <div className="flex items-center px-4 py-3 mb-4 bg-muted/50 rounded-md">
               <Shield size={16} className="text-primary mr-2" />
               <div className="truncate text-sm">
                 <span className="block font-medium">Administrador</span>
-                <span className="block text-xs text-muted-foreground truncate">{adminEmail}</span>
+                <span className="block text-xs text-muted-foreground truncate">{adminUsername}</span>
               </div>
             </div>
           )}
@@ -107,9 +107,9 @@ const AdminLayout = () => {
             </span>
           </Link>
           <div className="flex items-center space-x-2">
-            {adminEmail && (
+            {adminUsername && (
               <div className="hidden sm:block text-sm mr-2">
-                <span className="text-xs text-muted-foreground">{adminEmail}</span>
+                <span className="text-xs text-muted-foreground">{adminUsername}</span>
               </div>
             )}
             <Button variant="ghost" size="sm" onClick={handleLogout}>

@@ -8,14 +8,14 @@ import { toast } from "sonner";
 import { Lock, User } from "lucide-react"; 
 
 // Admin credentials - in a production app, these would be stored securely on a backend
-const ADMIN_EMAIL = "eltonsouza324@gmail.com";
-const ADMIN_PASSWORD = "38495573";
+const ADMIN_USERNAME = "user1";
+const ADMIN_PASSWORD = "casabranca1";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -31,12 +31,12 @@ const LoginForm = () => {
     // Validate admin credentials
     setTimeout(() => {
       if (
-        formData.email === ADMIN_EMAIL &&
+        formData.username === ADMIN_USERNAME &&
         formData.password === ADMIN_PASSWORD
       ) {
         // Store auth status in localStorage (in a real app, use more secure methods)
         localStorage.setItem("adminAuthenticated", "true");
-        localStorage.setItem("adminEmail", formData.email);
+        localStorage.setItem("adminUsername", formData.username);
         localStorage.setItem("adminLoginTime", Date.now().toString());
         
         navigate("/admin/dashboard");
@@ -53,17 +53,17 @@ const LoginForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email" className="flex items-center gap-2">
+        <Label htmlFor="username" className="flex items-center gap-2">
           <User size={16} />
-          Email
+          Usuário
         </Label>
         <Input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email}
+          id="username"
+          name="username"
+          type="text"
+          value={formData.username}
           onChange={handleChange}
-          placeholder="email@exemplo.com"
+          placeholder="Digite seu usuário"
           required
           className="bg-background"
         />
