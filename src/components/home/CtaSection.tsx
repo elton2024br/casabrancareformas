@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Link } from "react-router-dom";
 
 interface CtaSectionProps {
   addToRefs: (el: HTMLElement | null, index: number) => void;
@@ -10,6 +9,7 @@ interface CtaSectionProps {
 export function CtaSection({ addToRefs }: CtaSectionProps) {
   const isMobile = useIsMobile();
   const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
+  const instagramUrl = "https://www.instagram.com/casabranca_reformas/";
   
   // Em um app real, esses dados viriam do backend
   // Aqui estamos apenas simulando para demonstrar a funcionalidade
@@ -54,7 +54,9 @@ export function CtaSection({ addToRefs }: CtaSectionProps) {
                 </a>
               </Button>
               <Button asChild size={isMobile ? "default" : "lg"} variant="outline" className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 mt-3 sm:mt-0">
-                <Link to="/portfolio">Ver Projetos</Link>
+                <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
+                  Ver Projetos
+                </a>
               </Button>
             </div>
           </div>

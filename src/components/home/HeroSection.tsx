@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Link } from "react-router-dom";
 
 interface HeroSectionProps {
   addToRefs: (el: HTMLElement | null, index: number) => void;
@@ -10,6 +9,7 @@ interface HeroSectionProps {
 export function HeroSection({ addToRefs }: HeroSectionProps) {
   const isMobile = useIsMobile();
   const whatsappUrl = "https://wa.me/5512997767048?text=Gostaria%20de%20um%20orçamento.";
+  const instagramUrl = "https://www.instagram.com/casabranca_reformas/";
 
   // Em um app real, esses dados viriam do backend
   // Aqui estamos apenas simulando para demonstrar a funcionalidade
@@ -59,7 +59,9 @@ export function HeroSection({ addToRefs }: HeroSectionProps) {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4">
             <Button asChild size={isMobile ? "default" : "lg"} className="w-full sm:w-auto">
-              <Link to="/portfolio">Ver Projetos</Link>
+              <a href={instagramUrl} target="_blank" rel="noopener noreferrer">
+                Ver Projetos
+              </a>
             </Button>
             <Button asChild variant="outline" size={isMobile ? "default" : "lg"} className="w-full sm:w-auto bg-transparent text-white border-white hover:bg-white/10 mt-3 sm:mt-0">
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
