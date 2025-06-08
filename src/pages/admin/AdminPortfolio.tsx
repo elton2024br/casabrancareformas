@@ -9,37 +9,6 @@ import { ProjectCard } from "@/components/admin/portfolio/ProjectCard";
 import { AddProjectCard } from "@/components/admin/portfolio/AddProjectCard";
 import { supabase } from "@/integrations/supabase/client";
 
-// Mock data para projetos iniciais caso o banco de dados estiver vazio
-const initialProjects: Project[] = [
-  {
-    id: "1",
-    title: "Residência Moderna",
-    description: "Reforma completa de apartamento de 120m² com conceito aberto e design minimalista.",
-    imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1170&auto=format&fit=crop",
-    category: "Apartamento",
-    isVideo: false,
-    videoUrl: "",
-  },
-  {
-    id: "2",
-    title: "Cozinha Escandinava",
-    description: "Reforma de cozinha com inspiração escandinava, priorizando funcionalidade e elegância.",
-    imageUrl: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1170&auto=format&fit=crop",
-    category: "Cozinha",
-    isVideo: false,
-    videoUrl: "",
-  },
-  {
-    id: "3",
-    title: "Escritório Corporativo",
-    description: "Projeto de reforma para escritório corporativo com foco em produtividade e bem-estar.",
-    imageUrl: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1169&auto=format&fit=crop",
-    category: "Comercial",
-    isVideo: false,
-    videoUrl: "",
-  },
-];
-
 const AdminPortfolio = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,32 +28,16 @@ const AdminPortfolio = () => {
   useEffect(() => {
     const loadProjects = async () => {
       try {
-        // Verificar se há projetos salvos no armazenamento local
-        const storedProjects = localStorage.getItem('portfolioProjects');
+        // Limpar todos os projetos do localStorage
+        localStorage.removeItem('portfolioProjects');
         
-        if (storedProjects) {
-          const parsedProjects = JSON.parse(storedProjects);
-          
-          // Garantir que todos os projetos tenham as propriedades isVideo e videoUrl
-          const normalizedProjects = parsedProjects.map((project: Project) => ({
-            ...project,
-            isVideo: project.isVideo === undefined ? false : project.isVideo,
-            videoUrl: project.videoUrl || ""
-          }));
-          
-          setProjects(normalizedProjects);
-          console.log("Projetos carregados:", normalizedProjects);
-        } else {
-          // Se não houver no armazenamento local, usar os projetos iniciais
-          setProjects(initialProjects);
-          // Salvar no armazenamento local para futuras sessões
-          localStorage.setItem('portfolioProjects', JSON.stringify(initialProjects));
-          console.log("Projetos iniciais carregados");
-        }
+        // Definir lista vazia de projetos
+        setProjects([]);
+        console.log("Todos os projetos foram removidos");
+        toast.success("Todos os projetos foram removidos com sucesso!");
       } catch (error) {
-        console.error("Erro ao carregar projetos:", error);
-        toast.error("Erro ao carregar projetos");
-        setProjects(initialProjects);
+        console.error("Erro ao limpar projetos:", error);
+        toast.error("Erro ao limpar projetos");
       } finally {
         setLoading(false);
       }
@@ -202,17 +155,28 @@ const AdminPortfolio = () => {
       )}
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => (
-          <ProjectCard 
-            key={project.id}
-            project={project}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
+        {projects.length === 0 ? (
+          <div className="col-span-full text-center py-16">
+            <p className="text-muted-foreground text-lg mb-4">
+              Nenhum projeto encontrado no portfólio.
+            </p>
+            <Button onClick={handleAddNew}>
+              <Plus className="mr-2 h-4 w-4" /> Adicionar Primeiro Projeto
+            </Button>
+          </div>
+        ) : (
+          projects.map((project) => (
+            <ProjectCard 
+              key={project.id}
+              project={project}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))
+        )}
 
         {/* Add New Project Card */}
-        {!isAddMode && !editing && (
+        {!isAddMode && !editing && projects.length > 0 && (
           <AddProjectCard onClick={handleAddNew} />
         )}
       </div>
