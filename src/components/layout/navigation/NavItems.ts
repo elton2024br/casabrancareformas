@@ -2,7 +2,6 @@
 export const navItems = [
   { name: 'Início', path: '/', icon: 'home' },
   { name: 'Sobre', path: '/sobre', icon: 'info' },
-  { name: 'Portfólio', path: '/portfolio', icon: 'image' },
   { name: 'Depoimentos', path: '/depoimentos', icon: 'message-circle' },
   { name: 'Contato', path: '/contato', icon: 'mail' },
   { name: 'Blog', path: '/blog', icon: 'book' }

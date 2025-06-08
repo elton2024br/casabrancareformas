@@ -10,8 +10,6 @@ import "./index.css";
 
 // Importação lazy das páginas
 const Index = lazy(() => import("./pages/Index"));
-const Portfolio = lazy(() => import("./pages/Portfolio"));
-const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const Depoimentos = lazy(() => import("./pages/Depoimentos"));
 const Contato = lazy(() => import("./pages/Contato"));
 const About = lazy(() => import("./pages/About"));
@@ -24,7 +22,6 @@ const Login = lazy(() => import("./pages/admin/Login"));
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
 const AdminContent = lazy(() => import("./pages/admin/AdminContent"));
-const AdminPortfolio = lazy(() => import("./pages/admin/AdminPortfolio"));
 const AdminDepoimentos = lazy(() => import("./pages/admin/AdminDepoimentos"));
 const AdminContatos = lazy(() => import("./pages/admin/AdminContatos"));
 const BlogAdmin = lazy(() => import("./pages/admin/BlogAdmin"));
@@ -60,8 +57,6 @@ function App() {
               <Routes>
                 {/* Public Routes com preload para LCP */}
                 <Route path="/" element={<Index />} />
-                <Route path="/portfolio" element={<Portfolio />} />
-                <Route path="/portfolio/:id" element={<ProjectDetail />} />
                 <Route path="/depoimentos" element={<Depoimentos />} />
                 <Route path="/contato" element={<Contato />} />
                 <Route path="/sobre" element={<About />} />
@@ -73,7 +68,6 @@ function App() {
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="content" element={<AdminContent />} />
-                  <Route path="portfolio" element={<AdminPortfolio />} />
                   <Route path="depoimentos" element={<AdminDepoimentos />} />
                   <Route path="contatos" element={<AdminContatos />} />
                   <Route path="blog" element={<BlogAdmin />} />
