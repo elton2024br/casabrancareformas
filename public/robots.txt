@@ -1,39 +1,83 @@
-# Configurações para todos os crawlers
+
+# Robots.txt otimizado para Casa Branca Reformas
+# Empresa de construção civil e reformas em Ubatuba, SP
+# Configurado para máxima visibilidade em SEO local
+
+# Configurações gerais para todos os crawlers
 User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /admin/*
+Disallow: /private/
+Disallow: /wp-admin/
+Disallow: /wp-content/
 Disallow: /404
+Disallow: /error/
 Disallow: /*.json$
-Disallow: /_h5ai/
 Disallow: /*?*
+Disallow: /_h5ai/
+Disallow: /api/
+Disallow: /temp/
+Disallow: /tmp/
 
-# Configurações para Google
+# Configurações específicas para Google (prioridade para SEO local)
 User-agent: Googlebot
 Allow: /
+Allow: /sobre
+Allow: /depoimentos
+Allow: /contato
+Allow: /blog
+Allow: /blog/*
 Disallow: /admin/
 Disallow: /*.json$
 
-# Configurações para Google Imagens
+# Configurações para Google Imagens (importante para projetos de reforma)
 User-agent: Googlebot-Image
+Allow: /
 Allow: /public/
+Allow: /images/
 Allow: /*.jpg$
 Allow: /*.jpeg$
 Allow: /*.png$
 Allow: /*.webp$
 Allow: /*.svg$
-
-# Configurações para Bing
-User-agent: Bingbot
-Allow: /
 Disallow: /admin/
 
-# Configurações para Facebook
+# Configurações para Bing (segundo maior buscador)
+User-agent: Bingbot
+Allow: /
+Allow: /sobre
+Allow: /depoimentos
+Allow: /contato
+Allow: /blog
+Disallow: /admin/
+
+# Configurações para outros crawlers importantes
 User-agent: facebookexternalhit
 Allow: /
 
-# Crawl delay para evitar sobrecarga do servidor
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Configurações para crawlers de mapas (importante para negócio local)
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Evitar sobrecarga do servidor
 Crawl-delay: 1
 
-# Sitemap
-Sitemap: https://www.casabrancareformas.com.br/sitemap.xml
+# Localização do sitemap (essencial para SEO)
+Sitemap: https://casabrancareformas.com/sitemap.xml
+
+# Comentários para futuras modificações:
+# - Manter sempre as páginas principais (/, /sobre, /contato, /depoimentos, /blog) acessíveis
+# - Bloquear sempre /admin/ para proteger área administrativa
+# - Permitir acesso a imagens para melhor indexação dos projetos
+# - Manter Crawl-delay baixo para não prejudicar indexação
+# - Atualizar URL do sitemap quando domínio oficial for definido
