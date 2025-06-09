@@ -76,6 +76,14 @@ const Contato = () => {
         title="Contato Casa Branca Reformas Ubatuba | Orçamento Gratuito"
         description="Entre em contato com a Casa Branca Reformas em Ubatuba. Orçamento gratuito para construção civil e reformas. Atendimento personalizado e pontualidade garantida!"
         keywords="contato casa branca reformas, orçamento reformas ubatuba, contato construção civil, reforma residencial ubatuba"
+        canonicalUrl="https://casabrancareformas.com/contato"
+        ogTitle="Contato Casa Branca Reformas Ubatuba | Orçamento Gratuito"
+        ogDescription="Entre em contato para orçamento gratuito. Construção civil e reformas em Ubatuba com 10 anos de experiência."
+        twitterTitle="Contato Casa Branca Reformas"
+        twitterDescription="Orçamento gratuito para reformas e construção civil em Ubatuba. Atendimento personalizado."
+        ogImage="/og-contact.jpg"
+        twitterImage="/twitter-contact.jpg"
+        ogImageAlt="Entre em contato com a Casa Branca Reformas em Ubatuba"
         localBusiness={true}
       />
       

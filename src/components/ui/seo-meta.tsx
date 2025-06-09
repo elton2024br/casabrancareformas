@@ -1,3 +1,4 @@
+
 import { Helmet } from "react-helmet-async";
 
 interface SeoMetaProps {
@@ -5,6 +6,8 @@ interface SeoMetaProps {
   description: string;
   keywords?: string;
   ogImage?: string;
+  ogImageAlt?: string;
+  twitterImage?: string;
   canonicalUrl?: string;
   noindex?: boolean;
   language?: string;
@@ -14,6 +17,11 @@ interface SeoMetaProps {
   author?: string;
   localBusiness?: boolean;
   organizationSchema?: boolean;
+  ogType?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
 }
 
 export function SeoMeta({
@@ -21,6 +29,8 @@ export function SeoMeta({
   description,
   keywords = "reformas, design de interiores, arquitetura, reformas residenciais, reformas comerciais, projetos personalizados",
   ogImage = "/og-image.jpg",
+  ogImageAlt = "Casa Branca Reformas - Construção Civil em Ubatuba",
+  twitterImage = "/twitter-image.jpg",
   canonicalUrl,
   noindex = false,
   language = "pt-BR",
@@ -30,10 +40,24 @@ export function SeoMeta({
   author = "Casa Branca Reformas",
   localBusiness = true,
   organizationSchema = true,
+  ogType = "website",
+  ogTitle,
+  ogDescription,
+  twitterTitle,
+  twitterDescription,
 }: SeoMetaProps) {
-  const siteUrl = window.location.origin;
-  const currentUrl = window.location.href;
+  const siteUrl = "https://casabrancareformas.com";
+  const currentPath = window.location.pathname;
+  const currentUrl = `${siteUrl}${currentPath}`;
+  
+  // URL canônica: usa a fornecida ou gera dinamicamente
   const canonical = canonicalUrl || currentUrl;
+  
+  // Títulos e descrições para redes sociais (usa específicos ou fallback)
+  const socialTitle = ogTitle || title;
+  const socialDescription = ogDescription || description;
+  const twitterCardTitle = twitterTitle || socialTitle;
+  const twitterCardDescription = twitterDescription || socialDescription;
 
   // Dados da empresa para Schema.org
   const businessData = {
@@ -67,7 +91,13 @@ export function SeoMeta({
         "closes": "18:00"
       }
     ],
-    "priceRange": "$$"
+    "priceRange": "$$",
+    "areaServed": {
+      "@type": "City",
+      "name": "Ubatuba",
+      "addressRegion": "SP",
+      "addressCountry": "BR"
+    }
   };
 
   const organizationData = {
@@ -99,7 +129,7 @@ export function SeoMeta({
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       
-      {/* Canonical Link */}
+      {/* URL Canônica */}
       <link rel="canonical" href={canonical} />
       
       {/* Alternate Languages, se disponíveis */}
@@ -108,12 +138,15 @@ export function SeoMeta({
       ))}
       
       {/* Open Graph / Facebook */}
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={currentUrl} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={canonical} />
+      <meta property="og:title" content={socialTitle} />
+      <meta property="og:description" content={socialDescription} />
       <meta property="og:image" content={`${siteUrl}${ogImage}`} />
-      <meta property="og:locale" content={language} />
+      <meta property="og:image:alt" content={ogImageAlt} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:locale" content={language.replace('-', '_')} />
       <meta property="og:site_name" content="Casa Branca Reformas" />
       
       {/* Artigo metadata, se disponível */}
@@ -121,11 +154,12 @@ export function SeoMeta({
       {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
       {author && <meta property="article:author" content={author} />}
       
-      {/* Twitter */}
+      {/* Twitter Cards */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
+      <meta name="twitter:title" content={twitterCardTitle} />
+      <meta name="twitter:description" content={twitterCardDescription} />
+      <meta name="twitter:image" content={`${siteUrl}${twitterImage}`} />
+      <meta name="twitter:image:alt" content={ogImageAlt} />
       
       {/* Robots */}
       {noindex ? (

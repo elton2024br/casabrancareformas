@@ -95,6 +95,14 @@ const Depoimentos = () => {
         title="Depoimentos de Clientes | Casa Branca Reformas"
         description="Conheça o que nossos clientes têm a dizer sobre nossas reformas residenciais e comerciais. Histórias reais de transformação e satisfação."
         keywords="depoimentos casa branca, avaliações de reforma, testemunhos clientes, feedback reformas"
+        canonicalUrl="https://casabrancareformas.com/depoimentos"
+        ogTitle="Depoimentos Casa Branca Reformas | Clientes Satisfeitos"
+        ogDescription="Histórias reais de clientes satisfeitos com nossas reformas e construções em Ubatuba. Veja os depoimentos."
+        twitterTitle="Depoimentos Casa Branca Reformas"
+        twitterDescription="Clientes satisfeitos compartilham suas experiências com nossas reformas em Ubatuba."
+        ogImage="/og-testimonials.jpg"
+        twitterImage="/twitter-testimonials.jpg"
+        ogImageAlt="Depoimentos de clientes satisfeitos da Casa Branca Reformas"
       />
       
       <MainLayout>

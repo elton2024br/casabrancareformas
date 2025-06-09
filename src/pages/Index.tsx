@@ -50,6 +50,14 @@ const Index = () => {
         title="Casa Branca Reformas Ubatuba - Construção Civil e Reformas | 10 Anos"
         description="Empresa de construção civil em Ubatuba com 10 anos de experiência. Reformas residenciais, construção de casas e projetos personalizados. Qualidade premium, pontualidade garantida. Orçamento gratuito!"
         keywords="construção civil ubatuba, reformas ubatuba, reformas residenciais, reformas comerciais, casa branca reformas, construção ubatuba"
+        canonicalUrl="https://casabrancareformas.com/"
+        ogTitle="Casa Branca Reformas Ubatuba - Construção Civil e Reformas"
+        ogDescription="Empresa de construção civil em Ubatuba com 10 anos de experiência. Reformas residenciais e construção de casas com qualidade premium."
+        twitterTitle="Casa Branca Reformas Ubatuba - Construção Civil"
+        twitterDescription="10 anos de experiência em construção civil e reformas em Ubatuba. Qualidade premium e pontualidade garantida."
+        ogImage="/og-home.jpg"
+        twitterImage="/twitter-home.jpg"
+        ogImageAlt="Casa Branca Reformas - Empresa de construção civil em Ubatuba com 10 anos de experiência"
         localBusiness={true}
         organizationSchema={true}
       />

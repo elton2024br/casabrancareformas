@@ -11,6 +11,9 @@ const NotFound = () => {
       <SeoMeta 
         title="Página Não Encontrada | Casa Branca Reformas Ubatuba"
         description="A página que você está procurando não existe ou foi movida. Volte para a Casa Branca Reformas e encontre informações sobre construção civil em Ubatuba."
+        canonicalUrl="https://casabrancareformas.com/404"
+        ogTitle="Página Não Encontrada - Casa Branca Reformas"
+        ogDescription="A página solicitada não foi encontrada. Navegue pelo site da Casa Branca Reformas."
         noindex={true}
       />
       
