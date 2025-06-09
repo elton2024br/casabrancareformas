@@ -1,6 +1,7 @@
 
 import { useRef, useEffect } from "react";
 import MainLayout from "@/components/layout/MainLayout";
+import { SeoMeta } from "@/components/ui/seo-meta";
 import { HeroSection } from "@/components/home/HeroSection";
 import { AboutSection } from "@/components/home/AboutSection";
 import { ServicesSection } from "@/components/home/ServicesSection";
@@ -44,13 +45,23 @@ const Index = () => {
   };
 
   return (
-    <MainLayout>
-      <HeroSection addToRefs={addToRefs} />
-      <AboutSection addToRefs={addToRefs} />
-      <ServicesSection addToRefs={addToRefs} />
-      <TestimonialsSection addToRefs={addToRefs} />
-      <CtaSection addToRefs={addToRefs} />
-    </MainLayout>
+    <>
+      <SeoMeta 
+        title="Casa Branca Reformas Ubatuba - Construção Civil e Reformas | 10 Anos"
+        description="Casa Branca Reformas em Ubatuba - 10 anos de experiência em construção civil, reformas residenciais e comerciais. Transformamos espaços com design minimalista e execução impecável."
+        keywords="construção civil ubatuba, reformas ubatuba, reformas residenciais, reformas comerciais, casa branca reformas, construção ubatuba"
+        localBusiness={true}
+        organizationSchema={true}
+      />
+      
+      <MainLayout>
+        <HeroSection addToRefs={addToRefs} />
+        <AboutSection addToRefs={addToRefs} />
+        <ServicesSection addToRefs={addToRefs} />
+        <TestimonialsSection addToRefs={addToRefs} />
+        <CtaSection addToRefs={addToRefs} />
+      </MainLayout>
+    </>
   );
 };
 

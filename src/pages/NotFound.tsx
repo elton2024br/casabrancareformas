@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import MainLayout from "@/components/layout/MainLayout";
 import { SeoMeta } from "@/components/ui/seo-meta";
@@ -8,8 +9,9 @@ const NotFound = () => {
   return (
     <>
       <SeoMeta 
-        title="Página Não Encontrada | Casa Branca Reformas"
-        description="A página que você está procurando não existe ou foi movida."
+        title="Página Não Encontrada | Casa Branca Reformas Ubatuba"
+        description="A página que você está procurando não existe ou foi movida. Volte para a Casa Branca Reformas e encontre informações sobre construção civil em Ubatuba."
+        noindex={true}
       />
       
       <MainLayout>

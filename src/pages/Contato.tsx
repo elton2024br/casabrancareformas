@@ -1,3 +1,4 @@
+
 import { useRef, useEffect } from "react";
 import MainLayout from "@/components/layout/MainLayout";
 import { SeoMeta } from "@/components/ui/seo-meta";
@@ -72,9 +73,10 @@ const Contato = () => {
   return (
     <>
       <SeoMeta 
-        title="Contato | Casa Branca Reformas"
-        description="Entre em contato com a Casa Branca Reformas para orçamentos, dúvidas ou informações sobre nossos serviços de reforma residencial e comercial."
-        keywords="contato casabranca, orçamento reforma, reforma residencial, reforma comercial"
+        title="Contato Casa Branca Reformas Ubatuba | Orçamento Gratuito"
+        description="Entre em contato com a Casa Branca Reformas em Ubatuba para orçamentos gratuitos, dúvidas sobre construção civil e reformas. Atendimento especializado há 10 anos."
+        keywords="contato casa branca reformas, orçamento reformas ubatuba, contato construção civil, reforma residencial ubatuba"
+        localBusiness={true}
       />
       
       <MainLayout>
