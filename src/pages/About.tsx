@@ -9,7 +9,7 @@ const About = () => {
     <>
       <SeoMeta 
         title="Sobre a Casa Branca Reformas - 10 Anos em Ubatuba | Construção Civil"
-        description="Conheça a história da Casa Branca Reformas e Elton 'Casabranca' - 10 anos de experiência em construção civil e reformas em Ubatuba, SP. Excelência técnica e inovação."
+        description="Casa Branca Reformas atua há 10 anos em Ubatuba com construção civil e reformas. Equipe qualificada, projetos personalizados e execução impecável. Conheça nossa história!"
         keywords="sobre casa branca reformas, elton casabranca, construção civil ubatuba, história empresa reformas, experiência construção"
         localBusiness={true}
         publishedTime="2024-06-09T10:00:00Z"

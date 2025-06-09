@@ -48,7 +48,7 @@ const Index = () => {
     <>
       <SeoMeta 
         title="Casa Branca Reformas Ubatuba - Construção Civil e Reformas | 10 Anos"
-        description="Casa Branca Reformas em Ubatuba - 10 anos de experiência em construção civil, reformas residenciais e comerciais. Transformamos espaços com design minimalista e execução impecável."
+        description="Empresa de construção civil em Ubatuba com 10 anos de experiência. Reformas residenciais, construção de casas e projetos personalizados. Qualidade premium, pontualidade garantida. Orçamento gratuito!"
         keywords="construção civil ubatuba, reformas ubatuba, reformas residenciais, reformas comerciais, casa branca reformas, construção ubatuba"
         localBusiness={true}
         organizationSchema={true}

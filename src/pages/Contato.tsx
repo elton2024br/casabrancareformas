@@ -74,7 +74,7 @@ const Contato = () => {
     <>
       <SeoMeta 
         title="Contato Casa Branca Reformas Ubatuba | Orçamento Gratuito"
-        description="Entre em contato com a Casa Branca Reformas em Ubatuba para orçamentos gratuitos, dúvidas sobre construção civil e reformas. Atendimento especializado há 10 anos."
+        description="Entre em contato com a Casa Branca Reformas em Ubatuba. Orçamento gratuito para construção civil e reformas. Atendimento personalizado e pontualidade garantida!"
         keywords="contato casa branca reformas, orçamento reformas ubatuba, contato construção civil, reforma residencial ubatuba"
         localBusiness={true}
       />
