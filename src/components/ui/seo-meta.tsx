@@ -1,28 +1,19 @@
 
 import { Helmet } from "react-helmet-async";
-
-interface SeoMetaProps {
-  title: string;
-  description: string;
-  keywords?: string;
-  ogImage?: string;
-  ogImageAlt?: string;
-  twitterImage?: string;
-  canonicalUrl?: string;
-  noindex?: boolean;
-  language?: string;
-  alternateUrls?: { [lang: string]: string };
-  publishedTime?: string;
-  modifiedTime?: string;
-  author?: string;
-  localBusiness?: boolean;
-  organizationSchema?: boolean;
-  ogType?: string;
-  ogTitle?: string;
-  ogDescription?: string;
-  twitterTitle?: string;
-  twitterDescription?: string;
-}
+import { SeoMetaProps } from "@/types/seo";
+import {
+  getSiteUrl,
+  getCanonicalUrl,
+  getSocialTitle,
+  getSocialDescription,
+  getTwitterCardTitle,
+  getTwitterCardDescription,
+} from "@/utils/seo/seo-helpers";
+import {
+  createBusinessData,
+  createOrganizationData,
+  createBreadcrumbData,
+} from "@/utils/seo/structured-data";
 
 export function SeoMeta({
   title,
@@ -46,182 +37,17 @@ export function SeoMeta({
   twitterTitle,
   twitterDescription,
 }: SeoMetaProps) {
-  const siteUrl = "https://casabrancareformas.com";
-  const currentPath = window.location.pathname;
-  const currentUrl = `${siteUrl}${currentPath}`;
+  const siteUrl = getSiteUrl();
+  const canonical = getCanonicalUrl(canonicalUrl);
   
-  // URL canônica: usa a fornecida ou gera dinamicamente
-  const canonical = canonicalUrl || currentUrl;
-  
-  // Títulos e descrições para redes sociais (usa específicos ou fallback)
-  const socialTitle = ogTitle || title;
-  const socialDescription = ogDescription || description;
-  const twitterCardTitle = twitterTitle || socialTitle;
-  const twitterCardDescription = twitterDescription || socialDescription;
+  const socialTitle = getSocialTitle(ogTitle, title);
+  const socialDescription = getSocialDescription(ogDescription, description);
+  const twitterCardTitle = getTwitterCardTitle(twitterTitle, socialTitle);
+  const twitterCardDescription = getTwitterCardDescription(twitterDescription, socialDescription);
 
-  // Dados da empresa para Schema.org - LocalBusiness
-  const businessData = {
-    "@context": "https://schema.org",
-    "@type": "HomeAndConstructionBusiness",
-    "name": "Casa Branca Reformas",
-    "url": siteUrl,
-    "logo": `${siteUrl}/logo.png`,
-    "image": [`${siteUrl}${ogImage}`, `${siteUrl}/images/company-photo.jpg`],
-    "description": description,
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Rua das Reformas, 123",
-      "addressLocality": "Ubatuba",
-      "addressRegion": "SP",
-      "postalCode": "11680-000",
-      "addressCountry": "BR"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": -23.4344,
-      "longitude": -45.0839
-    },
-    "telephone": "+5512997767048",
-    "email": "contato@casabrancareformas.com.br",
-    "openingHoursSpecification": [
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "opens": "08:00",
-        "closes": "18:00"
-      },
-      {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": "Saturday",
-        "opens": "08:00",
-        "closes": "12:00"
-      }
-    ],
-    "priceRange": "$$",
-    "areaServed": [
-      {
-        "@type": "City",
-        "name": "Ubatuba",
-        "addressRegion": "SP",
-        "addressCountry": "BR"
-      },
-      {
-        "@type": "City",
-        "name": "Caraguatatuba",
-        "addressRegion": "SP",
-        "addressCountry": "BR"
-      },
-      {
-        "@type": "City",
-        "name": "São Sebastião",
-        "addressRegion": "SP",
-        "addressCountry": "BR"
-      }
-    ],
-    "serviceType": [
-      "Construção Civil",
-      "Reformas Residenciais",
-      "Reformas Comerciais",
-      "Design de Interiores",
-      "Ampliações",
-      "Renovações"
-    ],
-    "foundingDate": "2014",
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "87",
-      "bestRating": "5"
-    },
-    "review": [
-      {
-        "@type": "Review",
-        "author": {
-          "@type": "Person",
-          "name": "Ana Oliveira"
-        },
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": "5"
-        },
-        "reviewBody": "A Casa Branca transformou completamente meu apartamento. O processo foi transparente e o resultado superou minhas expectativas."
-      }
-    ],
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Serviços de Construção e Reforma",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Reforma Residencial Completa",
-            "description": "Reforma completa de residências incluindo projeto, execução e acabamento."
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Construção de Casas",
-            "description": "Construção de casas personalizadas do projeto à entrega da chave."
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Service",
-            "name": "Design de Interiores",
-            "description": "Projetos de design de interiores com foco em funcionalidade e estética."
-          }
-        }
-      ]
-    }
-  };
-
-  const organizationData = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Casa Branca Reformas",
-    "url": siteUrl,
-    "logo": `${siteUrl}/logo.png`,
-    "sameAs": [
-      "https://www.facebook.com/casabrancareformas",
-      "https://www.instagram.com/casabranca_reformas",
-      "https://www.linkedin.com/company/casabrancareformas"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+5512997767048",
-      "contactType": "customer service",
-      "availableLanguage": ["Portuguese"],
-      "areaServed": "BR"
-    },
-    "founder": {
-      "@type": "Person",
-      "name": "João Silva"
-    }
-  };
-
-  // Breadcrumb Schema para páginas internas
-  const breadcrumbData = currentPath !== "/" ? {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": siteUrl
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": title.split(" | ")[0],
-        "item": canonical
-      }
-    ]
-  } : null;
+  const businessData = createBusinessData(description, ogImage);
+  const organizationData = createOrganizationData();
+  const breadcrumbData = createBreadcrumbData(title, canonical);
 
   return (
     <Helmet>
